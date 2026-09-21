@@ -1,0 +1,308 @@
+/* Módulo Errores de timbrado. Los colores salen de los tokens de
+   css/theme.css para que el modo oscuro funcione sin reglas aparte. */
+
+/* Zona de archivo: la misma del corrector SQL, más el estado de arrastre. */
+.err-zona {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 18px;
+    border-radius: var(--r-field);
+    border: 1px dashed var(--wine-soft);
+    background: var(--bg);
+    font-size: 13.5px;
+    color: var(--ink-muted);
+    flex: 1;
+    min-width: 260px;
+    transition: border-color .18s ease, background .18s ease;
+}
+.err-zona:hover { border-color: var(--wine); }
+.err-zona.cargado { color: var(--ink); font-weight: 600; }
+.err-zona.arrastrando { border-color: var(--wine); background: var(--hover); }
+
+/* ── Hero del resumen ─────────────────────────────────────── */
+
+.err-hero {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.err-hero-cifra {
+    font-size: 46px;
+    color: var(--hero-ink);
+    letter-spacing: -1px;
+    margin: 10px 0 8px;
+}
+
+.err-hero-archivo {
+    font-size: 12.5px;
+    color: var(--hero-ink-soft);
+    letter-spacing: 0.2px;
+    word-break: break-all;
+}
+
+/* Los datos de apoyo (RFC únicos, series…) separados por hairlines. */
+.err-hero-datos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1px;
+    background: rgba(255, 238, 240, 0.16);
+    border-radius: 16px;
+    overflow: hidden;
+}
+.err-hero-dato {
+    background: var(--hero-bg);
+    padding: 16px 22px;
+    min-width: 130px;
+}
+.err-hero-dato .etiqueta {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--hero-ink-faint);
+}
+.err-hero-dato .valor {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--hero-ink);
+    margin-top: 8px;
+}
+
+/* ── Cuerpo ───────────────────────────────────────────────── */
+
+/* La gráfica se queda fija y la tabla toma el resto; en pantallas
+   angostas se apilan para que el mensaje no se corte. */
+.err-columnas {
+    display: grid;
+    grid-template-columns: 290px minmax(0, 1fr);
+    gap: 18px;
+    margin-top: 20px;
+    align-items: start;
+}
+@media (max-width: 1100px) {
+    .err-columnas { grid-template-columns: 1fr; }
+}
+
+.err-anillo-centro {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 26px;
+}
+
+.err-leyenda-fila {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    cursor: pointer;
+    border-radius: var(--r-chip);
+    padding: 3px 4px;
+    transition: background .14s ease;
+}
+.err-leyenda-fila:hover { background: var(--hover); }
+.err-leyenda-fila.activa { background: var(--chip); }
+.err-leyenda-fila .punto { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 auto; }
+.err-leyenda-fila .codigo {
+    font-size: 12px;
+    font-weight: 600;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.err-leyenda-fila .valor { font-size: 12px; font-weight: 600; flex: 0 0 auto; }
+.err-leyenda-fila .pct { font-size: 11.5px; color: var(--ink-faint); flex: 0 0 44px; text-align: right; }
+
+.err-filtros {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+/* Rejilla compartida por el encabezado y las filas de la tabla.
+   La primera columna es la casilla de revisado. */
+.err-fila {
+    display: grid;
+    grid-template-columns: 26px 1.3fr 0.9fr 0.5fr 0.8fr 3fr;
+    gap: 12px;
+}
+
+/* Marca de trabajo: se palomea mientras se va corrigiendo. El área de clic
+   es más grande que la casilla para no tener que apuntarle. */
+.err-check {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 2px;
+    margin: -2px;
+    cursor: pointer;
+}
+.err-check input {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    cursor: pointer;
+    accent-color: var(--wine);
+}
+
+/* Revisado: la fila se apaga pero sigue legible, para que el ojo caiga en lo
+   que falta sin perder de vista lo ya hecho. */
+.err-fila-marcada > div { opacity: .45; }
+.err-fila-marcada .err-rfc { text-decoration: line-through; }
+
+.err-marcadas {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--imp-text);
+    background: var(--imp-bg);
+    border-radius: var(--r-chip);
+    padding: 6px 11px;
+}
+
+.err-limpiar {
+    border: 0;
+    background: transparent;
+    color: var(--ink-faint);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: var(--r-chip);
+    transition: color .14s ease, background .14s ease;
+}
+.err-limpiar:hover { color: var(--wine); background: var(--hover); }
+.err-limpiar[hidden] { display: none; }
+
+.err-rfc {
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    word-break: break-all;
+}
+.err-curp {
+    font-size: 11px;
+    color: var(--ink-faint);
+    letter-spacing: 0.3px;
+    margin-top: 3px;
+    word-break: break-all;
+}
+
+/* Valor que se copia al hacer clic. Hasta que el cursor pasa encima se ve
+   igual que el texto de junto: hereda tipografía y color, y solo entonces
+   aparecen el fondo y el ícono. */
+.err-copiar {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 100%;
+    padding: 2px 7px;
+    margin: -2px -7px;
+    border: 0;
+    border-radius: var(--r-chip);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: background .14s ease;
+}
+.err-copiar > span { min-width: 0; word-break: break-all; }
+.err-copiar:hover { background: var(--chip); }
+.err-copiar:focus-visible { outline: 2px solid var(--wine); outline-offset: 1px; }
+
+.err-copiar .ic {
+    flex: 0 0 auto;
+    opacity: 0;
+    color: var(--ink-faint);
+    transition: opacity .14s ease;
+}
+.err-copiar:hover .ic,
+.err-copiar:focus-visible .ic { opacity: 1; }
+
+/* Confirmación: el ícono se va y en su lugar queda la palabra, sin mover
+   el valor de sitio ni tener que leer un aviso en otra parte de la pantalla. */
+.err-copiar.copiado .ic,
+.err-copiar.fallo .ic { display: none; }
+
+.err-copiar.copiado::after,
+.err-copiar.fallo::after {
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    border-radius: 6px;
+    padding: 2px 6px;
+    flex: 0 0 auto;
+}
+.err-copiar.copiado::after { content: "Copiado"; background: var(--imp-bg); color: var(--imp-text); }
+.err-copiar.fallo::after   { content: "No se pudo"; background: var(--can-bg); color: var(--can-text); }
+
+/* El mensaje del PAC es largo: ahí el botón ocupa todo el renglón. */
+.err-copiar--texto { display: flex; align-items: flex-start; }
+.err-copiar--texto .ic { margin-top: 3px; }
+/* Es prosa, no un código: se parte entre palabras. */
+.err-copiar--texto > span { word-break: break-word; }
+
+/* El motivo es largo: dos líneas en la fila y completo al abrirla. */
+.err-motivo {
+    color: var(--ink-muted);
+    line-height: 1.45;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.err-fila-abierta .err-motivo { -webkit-line-clamp: unset; overflow: visible; }
+
+.err-detalle {
+    grid-column: 1 / -1;
+    margin-top: 12px;
+    padding: 16px 18px;
+    border-radius: var(--r-field);
+    background: var(--bg);
+    border: 1px solid var(--border-soft);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 16px 24px;
+}
+.err-detalle .etiqueta { font-size: 10.5px; font-weight: 700; letter-spacing: 1.1px; text-transform: uppercase; color: var(--ink-faint); }
+.err-detalle .valor { font-size: 13px; margin-top: 5px; line-height: 1.5; word-break: break-word; }
+.err-detalle .ancho { grid-column: 1 / -1; }
+
+.err-acciones {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+}
+
+.err-sin-leer {
+    font-size: 11.5px;
+    color: var(--act-text);
+    background: var(--act-bg);
+    border-radius: var(--r-chip);
+    padding: 6px 11px;
+}
+
+.err-alerta {
+    background: var(--can-bg);
+    color: var(--can-text);
+    border-radius: var(--r-card);
+    padding: 16px 20px;
+    font-size: 14px;
+    line-height: 1.5;
+}

@@ -1,0 +1,285 @@
+/* ═══════════════════════════════════════════════════════════════
+   Permisos — matriz usuario × módulo.
+   Solo lo propio del módulo: superficies, tinta, radios y fuentes
+   salen de los tokens de css/theme.css.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Barra ──────────────────────────────────────────────────── */
+
+.prm-barra {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.prm-barra .field { min-width: 280px; flex: 1 1 280px; }
+
+.prm-contador {
+  margin-left: auto;
+  font-size: 12.5px;
+  color: var(--ink-faint);
+  white-space: nowrap;
+}
+
+/* ── Avisos ─────────────────────────────────────────────────── */
+
+.prm-aviso {
+  border-radius: var(--r-tile);
+  padding: 13px 18px;
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 16px;
+  background: var(--chip);
+  color: var(--ink-muted);
+}
+
+.prm-aviso--ok    { background: var(--imp-bg); color: var(--imp-text); }
+.prm-aviso--error { background: var(--can-bg); color: var(--can-text); }
+
+.prm-aviso code {
+  background: rgba(0, 0, 0, .06);
+  border-radius: var(--r-chip);
+  padding: 1px 5px;
+}
+
+/* ── Rejilla ────────────────────────────────────────────────── */
+
+/* Una columna para el usuario, --prm-cols para los módulos y una para los
+   botones. El número de módulos lo inyecta el PHP: si mañana hay uno más, la
+   tabla se ajusta sola. */
+.prm-grid {
+  display: grid;
+  grid-template-columns: minmax(200px, 1.6fr) repeat(var(--prm-cols), minmax(52px, 1fr)) 150px;
+  gap: 6px;
+  align-items: center;
+}
+
+/* Los nombres de módulo no caben en horizontal en una columna de ~60px, así
+   que la cabecera se lee en vertical. Es la única forma de que quepan diez
+   columnas sin obligar a desplazarse. */
+.prm-col {
+  height: 108px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.prm-col span {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  white-space: nowrap;
+  font-size: 12px;
+  line-height: 1;
+}
+
+/* La columna que no se administra desde aquí se atenúa, pero se muestra: que
+   exista y esté fija es información. */
+.prm-col--fijo span { color: var(--ink-faint); font-style: italic; }
+
+.prm-tabla { overflow-x: auto; }
+
+.prm-fila { min-height: 54px; }
+.prm-fila[hidden] { display: none; }
+
+/* ── Celda del usuario ──────────────────────────────────────── */
+
+.prm-usuario {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding-right: 10px;
+}
+
+.prm-login {
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.prm-nombre {
+  font-size: 12px;
+  color: var(--ink-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* "por omisión" contra "configurado": la diferencia es justo lo que hay que
+   poder ver de un vistazo, porque cambia cómo se resuelve el permiso. */
+.prm-estado {
+  align-self: flex-start;
+  margin-top: 2px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  background: var(--chip);
+  border-radius: var(--r-chip);
+  padding: 2px 7px;
+}
+
+.prm-estado--fijo { color: var(--wine); background: var(--act-bg); }
+
+/* ── Casillas ───────────────────────────────────────────────── */
+
+.prm-celda { display: flex; justify-content: center; }
+
+.prm-check {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background .15s ease;
+}
+
+.prm-check:hover { background: var(--hover); }
+
+/* La casilla real se esconde pero sigue siendo la que recibe foco y teclado;
+   lo que se pinta es .prm-caja. */
+.prm-check input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.prm-caja {
+  width: 19px;
+  height: 19px;
+  border-radius: 6px;
+  border: 1.5px solid var(--border);
+  background: var(--card);
+  display: grid;
+  place-items: center;
+  transition: background .15s ease, border-color .15s ease;
+}
+
+.prm-check input:checked + .prm-caja {
+  background: var(--wine);
+  border-color: var(--wine);
+}
+
+/* La palomita es un pseudo-elemento con dos bordes girados: no hace falta un
+   SVG por celda cuando son casi trescientas. */
+.prm-check input:checked + .prm-caja::after {
+  content: '';
+  width: 5px;
+  height: 9px;
+  margin-top: -2px;
+  border: solid var(--on-wine);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.prm-check input:focus-visible + .prm-caja {
+  outline: 2px solid var(--wine);
+  outline-offset: 2px;
+}
+
+.prm-check input:disabled + .prm-caja {
+  opacity: .4;
+  background: var(--chip);
+  border-style: dashed;
+}
+
+.prm-check:has(input:disabled) { cursor: not-allowed; }
+.prm-check:has(input:disabled):hover { background: transparent; }
+
+/* ── Acciones ───────────────────────────────────────────────── */
+
+.prm-acciones {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.prm-btn {
+  padding: 7px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--ink-muted);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color .15s ease, color .15s ease;
+}
+
+.prm-btn:hover { border-color: var(--wine-soft); color: var(--wine); }
+.prm-btn[hidden] { display: none; }
+
+.prm-guardar {
+  background: var(--wine);
+  border-color: var(--wine);
+  color: var(--on-wine);
+}
+
+.prm-guardar:hover { opacity: .88; color: var(--on-wine); border-color: var(--wine); }
+
+/* Un renglón con cambios sin guardar se marca con una banda vino a la
+   izquierda: con veintitantos usuarios en pantalla, el botón solo no basta
+   para encontrar dónde quedó algo a medias. */
+.prm-fila--sucia {
+  background: var(--hover);
+  box-shadow: inset 3px 0 0 var(--wine);
+}
+
+.prm-fila--ocupada { opacity: .55; pointer-events: none; }
+
+/* ── Pie ────────────────────────────────────────────────────── */
+
+.prm-vacio {
+  padding: 28px;
+  text-align: center;
+  color: var(--ink-muted);
+  font-size: 13px;
+}
+
+.prm-nota {
+  margin-top: 22px;
+  border-top: 1px solid var(--border-soft);
+  padding-top: 14px;
+}
+
+.prm-nota summary {
+  cursor: pointer;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-muted);
+}
+
+.prm-nota summary:hover { color: var(--wine); }
+
+.prm-nota p {
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--ink-muted);
+  max-width: 78ch;
+}
+
+.prm-nota code {
+  background: var(--chip);
+  border-radius: var(--r-chip);
+  padding: 1px 5px;
+  font-size: 12px;
+  color: var(--wine);
+}
+
+/* ── Angosto ────────────────────────────────────────────────── */
+
+@media (max-width: 1100px) {
+  .prm-grid { min-width: 940px; }
+  .prm-contador { margin-left: 0; }
+}

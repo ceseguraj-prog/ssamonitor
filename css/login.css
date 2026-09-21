@@ -1,0 +1,235 @@
+/* ═══════════════════════════════════════════════════════════════
+   Login — única pantalla fuera del armazón de módulos.
+   Todo sale de los tokens de css/theme.css: superficies, tinta,
+   radios, sombras y tipografía. El tema oscuro se hereda sin una
+   sola regla extra.
+   ═══════════════════════════════════════════════════════════════ */
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  box-sizing: border-box;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Lámina ─────────────────────────────────────────────────── */
+
+/* Dos mitades: el vino a la izquierda para que la marca entre por
+   los ojos, el formulario sobre superficie limpia a la derecha. */
+.login {
+  width: 100%;
+  max-width: 880px;
+  display: grid;
+  grid-template-columns: 1.02fr 1fr;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-hero);
+  box-shadow: var(--shadow-sheet);
+  overflow: hidden;
+}
+
+/* ── Mitad de marca ─────────────────────────────────────────── */
+
+.login__marca {
+  position: relative;
+  overflow: hidden;
+  background: var(--hero-bg);
+  color: var(--hero-ink);
+  padding: 46px 42px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Brillo diagonal muy tenue: le quita lo plano al vino sin llamar
+   la atención. No es interactivo. */
+.login__sheen {
+  position: absolute;
+  top: -40%;
+  right: -30%;
+  width: 380px;
+  height: 380px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 220, 225, 0.16), rgba(255, 220, 225, 0) 70%);
+  pointer-events: none;
+}
+
+.login__logo {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 238, 240, 0.12);
+  color: var(--hero-ink);
+  margin-bottom: 8px;
+}
+
+.login__nombre {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 34px;
+  font-weight: 600;
+  letter-spacing: -0.4px;
+  line-height: 1.1;
+}
+
+.login__lema {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--hero-ink-soft);
+  max-width: 30ch;
+}
+
+.login__pie {
+  margin-top: auto;
+  padding-top: 26px;
+  font-size: 12px;
+  color: var(--hero-ink-faint);
+  border-top: 1px solid rgba(255, 238, 240, 0.16);
+}
+
+/* ── Mitad del formulario ───────────────────────────────────── */
+
+.login__panel {
+  padding: 46px 42px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+}
+
+.login__titulo {
+  margin: 6px 0 0;
+  font-family: var(--font-display);
+  font-size: 23px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+}
+
+.login__ayuda {
+  margin: -12px 0 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-muted);
+}
+
+.login__form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 4px;
+}
+
+.login__campo {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.login__campo .field { width: 100%; box-sizing: border-box; }
+
+/* ── Contraseña con el ojo ──────────────────────────────────── */
+
+.login__clave { position: relative; }
+
+/* Hueco a la derecha para que el texto nunca pase por debajo del botón. */
+.login__clave .field { padding-right: 46px; }
+
+.login__ojo {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--ink-faint);
+  cursor: pointer;
+  transition: color .18s ease, background-color .18s ease;
+}
+
+.login__ojo:hover { color: var(--wine); background: var(--chip); }
+.login__ojo:focus-visible { outline: 2px solid var(--wine); outline-offset: 1px; }
+
+.login__entrar {
+  width: 100%;
+  margin-top: 4px;
+  font-size: 14.5px;
+  padding: 14px 26px;
+}
+
+/* ── Error ──────────────────────────────────────────────────── */
+
+/* Mismo lenguaje que los avisos de los módulos: fondo de estado, sin
+   borde, y ocupa su sitio en el flujo en vez de taparlo todo con un
+   modal como hacía SweetAlert. */
+.login__error {
+  background: var(--can-bg);
+  color: var(--can-text);
+  border-radius: var(--r-field);
+  padding: 13px 16px;
+  font-size: 13px;
+  line-height: 1.5;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.login__error svg { flex: 0 0 auto; margin-top: 1px; }
+
+/* ── Botón de tema ──────────────────────────────────────────── */
+
+.login__tema {
+  position: fixed;
+  top: 20px;
+  right: 22px;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--ink-muted);
+  cursor: pointer;
+  transition: color .18s ease, border-color .18s ease;
+}
+
+.login__tema:hover { color: var(--wine); border-color: var(--wine-soft); }
+
+/* ── Angosto ────────────────────────────────────────────────── */
+
+/* Por debajo de ~760px las dos mitades no caben lado a lado. El vino
+   pasa a ser una cabecera compacta: se mantiene la marca, se recorta
+   todo lo que solo era aire. */
+@media (max-width: 760px) {
+  .login { grid-template-columns: 1fr; max-width: 420px; }
+
+  .login__marca {
+    padding: 30px 30px 26px;
+    gap: 12px;
+  }
+
+  .login__logo { width: 40px; height: 40px; margin-bottom: 2px; }
+  .login__nombre { font-size: 27px; }
+  .login__lema { font-size: 13px; }
+  .login__pie { display: none; }
+  .login__panel { padding: 30px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login__ojo, .login__tema { transition: none; }
+}

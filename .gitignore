@@ -1,3 +1,56 @@
 config/config.php
+
+# Permisos por usuario del módulo Permisos. Es estado del despliegue, como
+# config.php: cada servidor tiene los suyos. Sin este archivo el sistema cae
+# en los permisos por omisión de cada modulo.php, que es un arranque seguro.
+config/permisos.json
+config/permisos.json.lock
+
+# Catálogo de grupos de terceros dado de alta desde la pantalla. Igual que lo
+# anterior: sin este archivo quedan solo los grupos de fábrica del código.
+config/terceros-grupos.json
+config/terceros-grupos.json.lock
+
 vendor/
 .DS_Store
+cache/
+
+# Secretos locales (API keys). Solo se versiona .env.example.
+.env
+
+# Resultados temporales del módulo Corrector SQL
+modules/*/storage/*.sql
+
+# Notas de trabajo y scripts de verificación. Contexto para retomar el trabajo
+# (de dónde salen los datos, qué se midió, qué sigue abierto). No se versiona
+# porque mezcla notas con rutas y cifras de archivos reales de nómina.
+notas/
+
+# Nómina real. Los archivos del módulo TG-7 traen RFC, CURP, NSS y sueldo de
+# miles de trabajadores; el módulo los procesa en el navegador y no los sube a
+# ningún lado, así que aquí nunca debería aparecer uno. Esto es la red por si
+# alguien deja una copia de prueba dentro del proyecto.
+ISSSTE*.ORD
+ISSSTE*.EXT
+ISSSTE*.CAN
+ISSSTE*.RET
+NOMPPR-*.txt
+bitacora-*.csv
+
+# Mockups del handoff de diseno. Llevan datos de muestra que NO son inventados:
+# nombre, RFC, CURP y CP de trabajadores reales incrustados en el HTML. El
+# README y el theme.css de esa carpeta si se versionan.
+design_handoff/*.dc.html
+
+# Exportaciones de consultas hechas a mano. Los .sql de sql/ son las consultas
+# y se versionan; los .csv son su resultado y traen RFC, nombre y CURP de
+# trabajadores reales, asi que no.
+sql/*.csv
+
+# Cache de Wrangler (Cloudflare) y basura de redirecciones mal escritas en
+# Windows: "algo > nul" crea un archivo llamado nul en vez de descartar.
+.wrangler/
+nul
+
+# Permisos locales de Claude Code: rutas absolutas de esta maquina.
+.claude/settings.local.json

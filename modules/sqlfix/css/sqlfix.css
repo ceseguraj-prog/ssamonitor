@@ -1,0 +1,90 @@
+/* Estilos propios del módulo Corrector SQL. Los colores salen de los tokens
+   de css/theme.css para que el modo oscuro funcione sin reglas aparte. */
+
+/* Zona de archivo: borde punteado en vino suave, del ancho de la fila. */
+.sqlfix-zona {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 18px;
+    border-radius: var(--r-field);
+    border: 1px dashed var(--wine-soft);
+    background: var(--bg);
+    font-size: 13.5px;
+    color: var(--ink-muted);
+    flex: 1;
+    min-width: 260px;
+    transition: border-color .18s ease, background .18s ease;
+}
+.sqlfix-zona:hover { border-color: var(--wine); }
+.sqlfix-zona.cargado { color: var(--ink); font-weight: 600; }
+
+/* Los ejemplos del encabezado (YOIC'S → YOIC''S). */
+.sqlfix-muestra { color: var(--wine); font-weight: 600; letter-spacing: 0.4px; }
+
+/* Cifra de estadística: serif, como todas las cifras del sistema. */
+.sqlfix-stat .valor {
+    font-family: var(--font-display);
+    font-size: 25px;
+    font-weight: 500;
+    letter-spacing: -0.5px;
+    margin-top: 8px;
+}
+
+.sqlfix-diff {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 11.5px;
+    word-break: break-all;
+}
+
+/* El "antes" tachado y el "después" resaltado hacen la corrección evidente
+   sin tener que comparar dos cadenas largas carácter por carácter. */
+.sqlfix-antes {
+    color: var(--can-text);
+    text-decoration: line-through;
+    opacity: .8;
+}
+
+.sqlfix-despues {
+    color: var(--imp-text);
+}
+
+.sqlfix-despues::before,
+.sqlfix-antes::before {
+    display: inline-block;
+    width: 1.1rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.sqlfix-antes::before { content: "−"; }
+.sqlfix-despues::before { content: "+"; }
+
+.sqlfix-alerta {
+    background: var(--can-bg);
+    color: var(--can-text);
+    border-radius: var(--r-card);
+    padding: 16px 20px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Insignia de un carácter no-ASCII encontrado. */
+.sqlfix-caracter {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 11px;
+    border-radius: var(--r-chip);
+    font-size: 11.5px;
+    background: var(--chip);
+    color: var(--ink);
+    border: 1px solid var(--border);
+}
+.sqlfix-caracter.sospechoso {
+    background: var(--act-bg);
+    color: var(--act-text);
+    border-color: transparent;
+}
+.sqlfix-caracter .punto { color: var(--ink-faint); }

@@ -1,0 +1,259 @@
+/* Módulo CheckID. Se apoya en los tokens de css/theme.css: nada de colores
+   literales, para que el modo oscuro funcione sin reglas aparte. */
+
+.ck-buscador {
+    padding: 26px 30px;
+    margin-bottom: 24px;
+}
+
+.ck-fila-busqueda {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.ck-termino {
+    flex: 1 1 320px;
+    min-width: 240px;
+    background: var(--bg);
+    font-size: 14.5px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+}
+
+.ck-ayuda {
+    font-size: 12px;
+    color: var(--ink-muted);
+    margin-top: 10px;
+    min-height: 16px;
+}
+
+.ck-ayuda.ok  { color: var(--imp-text); }
+.ck-ayuda.mal { color: var(--can-text); font-weight: 600; }
+
+/* ═══ Ficha de identidad ═══════════════════════════════════════
+   El resultado no son tarjetas sueltas: es una sola ficha con
+   cabecera en vino, franja de identificadores y secciones abajo.
+   ═══════════════════════════════════════════════════════════════ */
+
+.ck-ficha {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-hero);
+    overflow: hidden;
+    box-shadow: var(--shadow-sheet);
+    animation: om-rise-in .55s cubic-bezier(.2,.8,.2,1) both;
+}
+
+.ck-ficha-cabecera {
+    background: var(--hero-bg);
+    color: var(--hero-ink);
+    padding: 34px 38px 30px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Halo + franja vertical: el acento de color de toda la ficha. */
+.ck-ficha-cabecera::before {
+    content: "";
+    position: absolute;
+    top: -130px; right: -80px;
+    width: 320px; height: 320px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,220,225,0.17), rgba(255,220,225,0) 70%);
+    pointer-events: none;
+}
+.ck-ficha-cabecera::after {
+    content: "";
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 5px;
+    background: linear-gradient(180deg, var(--hero-imp), var(--hero-act));
+}
+
+.ck-ficha-identidad {
+    display: flex;
+    align-items: center;
+    gap: 26px;
+    flex-wrap: wrap;
+    position: relative;
+}
+
+.ck-retrato {
+    width: 96px;
+    height: 96px;
+    border-radius: 26px;
+    background: rgba(255, 238, 240, 0.15);
+    border: 1px solid rgba(255, 238, 240, 0.28);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    font-family: var(--font-display);
+    font-size: 34px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    animation: om-pop .6s cubic-bezier(.2,.8,.2,1) .12s both;
+}
+
+.ck-nombre {
+    font-family: var(--font-display);
+    font-size: 29px;
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: -0.3px;
+}
+
+.ck-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+    font-size: 12.5px;
+    color: var(--hero-ink-soft);
+}
+
+.ck-meta .ck-pastilla {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.9px;
+    padding: 4px 11px;
+    border-radius: var(--r-chip);
+    background: rgba(255, 238, 240, 0.16);
+    color: var(--hero-ink);
+}
+
+.ck-meta .ck-sep {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--hero-ink-faint);
+}
+
+.ck-regimen { text-align: right; min-width: 150px; }
+.ck-regimen .valor {
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 500;
+    margin-top: 6px;
+}
+
+/* Franja de identificadores primarios: bloques separados por hairlines
+   de 1px que se ven gracias al gap sobre un fondo más claro. */
+.ck-primarios {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 1px;
+    margin-top: 30px;
+    position: relative;
+    background: rgba(255, 238, 240, 0.16);
+    border-radius: 16px;
+    overflow: hidden;
+}
+.ck-primario { background: var(--hero-bg); padding: 18px 20px; }
+.ck-primario .etiqueta {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--hero-ink-faint);
+}
+.ck-primario .valor {
+    font-size: 15px;
+    font-weight: 600;
+    margin-top: 8px;
+    letter-spacing: 1.1px;
+    word-break: break-all;
+}
+
+.ck-ficha-cuerpo { padding: 8px 38px 30px; }
+
+.ck-seccion { padding: 26px 0; border-bottom: 1px solid var(--border-soft); }
+.ck-seccion:last-of-type { border-bottom: 0; }
+
+.ck-seccion-titulo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+.ck-seccion-titulo .punto {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--wine);
+    flex: 0 0 auto;
+}
+
+.ck-campos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 22px 30px;
+}
+.ck-campo-etiqueta { font-size: 11px; color: var(--ink-muted); letter-spacing: 0.3px; }
+.ck-campo-valor {
+    font-size: 14px;
+    font-weight: 600;
+    margin-top: 5px;
+    letter-spacing: 0.4px;
+    word-break: break-word;
+}
+
+.ck-pie {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+    padding-top: 22px;
+    border-top: 1px solid var(--border-soft);
+}
+.ck-pie .fuente { font-size: 11.5px; color: var(--ink-faint); }
+.ck-pie .acciones { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* Insignias y avisos */
+.ck-insignia {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 9px;
+    border-radius: 7px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.7px;
+    flex: 0 0 auto;
+}
+.ck-insignia.ok  { background: var(--imp-bg); color: var(--imp-text); }
+.ck-insignia.mal { background: var(--can-bg); color: var(--can-text); }
+.ck-insignia.n-a { background: var(--inv-bg); color: var(--inv-text); }
+
+.ck-alerta {
+    border-radius: var(--r-card);
+    padding: 16px 20px;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 18px;
+}
+.ck-alerta code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    background: rgba(0, 0, 0, .08);
+    border-radius: 6px;
+    padding: 1px 5px;
+}
+.ck-alerta-error { background: var(--can-bg); color: var(--can-text); }
+.ck-alerta-aviso { background: var(--act-bg); color: var(--act-text); }
+
+.ck-seccion-error {
+    font-size: 13px;
+    color: var(--can-text);
+    background: var(--can-bg);
+    border-radius: 12px;
+    padding: 10px 13px;
+    margin-bottom: 16px;
+}
+
+@media (max-width: 720px) {
+    .ck-ficha-cabecera, .ck-ficha-cuerpo { padding-left: 24px; padding-right: 24px; }
+}

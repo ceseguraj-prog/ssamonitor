@@ -11,12 +11,12 @@ use Exception;
  */
 class Database
 {
-    private static ?Database $instance = null;
+    private static array $instances = [];
     private mysqli $connection;
 
-    private function __construct()
+    private function __construct(string $host, string $user, string $pass, string $name)
     {
-        $this->connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+        $this->connection = new mysqli($host, $user, $pass, $name);
 
         if ($this->connection->connect_error) {
             throw new Exception('Error en la conexión: ' . $this->connection->connect_error);
@@ -27,11 +27,23 @@ class Database
 
     public static function getInstance(): Database
     {
-        if (self::$instance === null) {
-            self::$instance = new self();
+        return self::get('default');
+    }
+
+    /**
+     * Devuelve la conexión con nombre dado. 'default' es la base del propio
+     * proyecto (usuarios/sesión); 'bpm' es la base BPM de solo lectura.
+     */
+    public static function get(string $key = 'default'): Database
+    {
+        if (!isset(self::$instances[$key])) {
+            self::$instances[$key] = match ($key) {
+                'bpm' => new self(DB_HOSTBPM, DB_USERBPM, DB_PASSBPM, DB_NAMEBPM),
+                default => new self(DB_HOST, DB_USER, DB_PASS, DB_NAME),
+            };
         }
 
-        return self::$instance;
+        return self::$instances[$key];
     }
 
     /**
@@ -47,6 +59,46 @@ class Database
         $stmt->close();
 
         return $rows;
+    }
+
+    /**
+     * Igual que query(), pero entrega las filas de una en una.
+     *
+     * query() arma un arreglo PHP con el resultado completo, que es lo correcto
+     * para unos miles de filas. Cuando la consulta barre un periodo entero de
+     * las seis tablas de nómina son cientos de miles de filas de ~110 columnas,
+     * y materializarlas todas a la vez se lleva cientos de MB.
+     *
+     * El resultado igual viaja completo del servidor al cliente —mysqli lo
+     * almacena en buffer— pero del lado de PHP solo vive una fila convertida a
+     * arreglo a la vez, que es de donde sale el ahorro.
+     *
+     * @return \Generator<int,array<string,mixed>>
+     */
+    public function stream(string $sql, array $params = []): \Generator
+    {
+        $stmt = $this->prepare($sql, $params);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+
+        try {
+            if (!$result instanceof \mysqli_result) {
+                return;
+            }
+
+            while (($row = $result->fetch_assoc()) !== null) {
+                yield $row;
+            }
+        } finally {
+            // Quien consume puede abandonar el generador a medias (un break, una
+            // excepción); sin esto la sentencia se quedaría abierta.
+            if ($result instanceof \mysqli_result) {
+                $result->free();
+            }
+
+            $stmt->close();
+        }
     }
 
     /**

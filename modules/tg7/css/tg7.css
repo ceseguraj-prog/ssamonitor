@@ -1,0 +1,139 @@
+/* Estilos propios del módulo TG-7. Los colores salen de los tokens de
+   css/theme.css para que el modo oscuro funcione sin reglas aparte. */
+
+/* Zona de archivos: borde punteado en vino suave, igual que el corrector SQL,
+   para que las dos herramientas de archivo se lean como la misma familia. */
+.tg7-zona {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 18px;
+    border-radius: var(--r-field);
+    border: 1px dashed var(--wine-soft);
+    background: var(--bg);
+    font-size: 13.5px;
+    color: var(--ink-muted);
+    flex: 1;
+    min-width: 240px;
+    transition: border-color .18s ease, background .18s ease;
+}
+.tg7-zona:hover { border-color: var(--wine); }
+.tg7-zona.cargado { color: var(--ink); font-weight: 600; }
+
+/* Lista de archivos cargados. */
+.tg7-lista { list-style: none; margin: 14px 0 0; padding: 0; }
+.tg7-archivo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 10px;
+    padding: 7px 0;
+    border-top: 1px solid var(--border-soft);
+    font-size: 12.5px;
+}
+.tg7-archivo:first-child { border-top: 0; }
+.tg7-archivo__nombre { font-weight: 600; color: var(--ink); }
+.tg7-archivo__detalle { color: var(--ink-muted); }
+
+/* Rejilla del encabezado: son 8 campos cortos, así que caben en fila. */
+.tg7-encabezado {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(126px, 1fr));
+    gap: 16px;
+}
+.tg7-campo-form { display: flex; flex-direction: column; gap: 7px; }
+.tg7-campo-form > label {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 1.1px;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+}
+.tg7-campo-form input,
+.tg7-campo-form select {
+    font-family: var(--font-ui);
+    font-size: 13.5px;
+    color: var(--ink);
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-field);
+    padding: 10px 12px;
+    width: 100%;
+}
+.tg7-campo-form input:focus,
+.tg7-campo-form select:focus { outline: none; border-color: var(--wine); }
+.tg7-campo-form .ayuda { font-size: 11px; color: var(--ink-faint); }
+
+/* Cifra de estadística: serif, como todas las cifras del sistema. */
+.tg7-stat .valor {
+    font-family: var(--font-display);
+    font-size: 25px;
+    font-weight: 500;
+    letter-spacing: -.5px;
+    margin-top: 8px;
+}
+.tg7-stat .valor.acento { color: var(--wine); }
+
+/* Nombre del archivo que se va a generar, en monoespaciada porque cada
+   carácter de la clave de aportante importa. */
+.tg7-nombre-archivo {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12.5px;
+    color: var(--wine);
+    font-weight: 600;
+    word-break: break-all;
+}
+
+.tg7-alerta {
+    background: var(--can-bg);
+    color: var(--can-text);
+    border-radius: var(--r-card);
+    padding: 16px 20px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Señales de calidad del origen: no son errores del archivo, son cosas que
+   hay que reclamarle a quien genera la nómina. */
+.tg7-senales { list-style: none; margin: 0; padding: 0; }
+.tg7-senales > li {
+    padding: 11px 0;
+    border-top: 1px solid var(--border-soft);
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--ink-muted);
+}
+.tg7-senales > li:first-child { border-top: 0; }
+.tg7-senales strong {
+    font-family: var(--font-display);
+    font-size: 15px;
+    color: var(--ink);
+    margin-right: 4px;
+}
+
+/* Filas de las cuatro tablas de detalle. */
+.tg7-fila-hallazgo    { display: grid; grid-template-columns: 6.5rem 11rem 1fr 5rem; gap: 10px; align-items: start; }
+.tg7-fila-rechazo     { display: grid; grid-template-columns: 11rem 9rem 1fr;        gap: 10px; align-items: start; }
+.tg7-fila-incidencia  { display: grid; grid-template-columns: 12rem 4rem 11rem 1fr;  gap: 10px; align-items: start; }
+.tg7-fila-sinprestamo { display: grid; grid-template-columns: 11rem 7rem 1fr 4rem;   gap: 10px; align-items: start; }
+
+.tg7-campo {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 11.5px;
+    word-break: break-all;
+}
+.tg7-mensaje { font-size: 12px; color: var(--ink-muted); line-height: 1.5; }
+.tg7-conteo {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+}
+
+@media (max-width: 720px) {
+    .tg7-fila-hallazgo,
+    .tg7-fila-rechazo,
+    .tg7-fila-incidencia,
+    .tg7-fila-sinprestamo { grid-template-columns: 1fr; gap: 4px; }
+    .tg7-conteo { text-align: left; }
+}

@@ -1,0 +1,392 @@
+/* ═══════════════════════════════════════════════════════════════
+   Conceptos — búsqueda de claves de pago.
+   Solo lo propio del módulo: superficies, tinta, radios y fuentes
+   salen de los tokens de css/theme.css, así que el tema oscuro y
+   cualquier ajuste de paleta se heredan sin tocar este archivo.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Formulario ─────────────────────────────────────────────── */
+
+.cnp-fila {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.cnp-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  flex: 1 1 260px;
+}
+
+/* El ejercicio y la quincena son cortos y de ancho fijo: si crecieran como la
+   caja de códigos, la fila se vería descuadrada al envolver. */
+.cnp-campo--corto { flex: 0 0 150px; }
+
+.cnp-campo .field { width: 100%; }
+
+.cnp-ayuda {
+  margin-top: 14px;
+  font-size: 12.5px;
+  color: var(--ink-muted);
+  line-height: 1.55;
+}
+
+.cnp-ayuda code {
+  background: var(--chip);
+  border-radius: var(--r-chip);
+  padding: 2px 6px;
+  font-size: 12px;
+  color: var(--wine);
+}
+
+.cnp-avanzado {
+  margin-top: 16px;
+  border-top: 1px solid var(--border-soft);
+  padding-top: 14px;
+}
+
+.cnp-avanzado summary {
+  cursor: pointer;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-muted);
+}
+
+.cnp-avanzado summary:hover { color: var(--wine); }
+
+.cnp-tablas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+  margin-top: 16px;
+}
+
+.cnp-check {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.cnp-check input { accent-color: var(--wine); cursor: pointer; }
+.cnp-check--suelto { margin-top: 14px; }
+
+/* ── Aviso (vacío, tope alcanzado, error) ───────────────────── */
+
+.cnp-aviso {
+  background: var(--act-bg);
+  color: var(--act-text);
+  border-radius: var(--r-tile);
+  padding: 16px 22px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+/* ── Métricas ───────────────────────────────────────────────── */
+
+.cnp-metricas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.cnp-tile {
+  padding: 20px 24px;
+  border-radius: var(--r-tile);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cnp-tile .figure { font-size: 27px; }
+
+/* ── Desgloses en chips ─────────────────────────────────────── */
+
+.cnp-desglose {
+  padding: 20px 24px;
+  border-radius: var(--r-tile);
+  margin-bottom: 16px;
+}
+
+.cnp-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 14px;
+}
+
+.cnp-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 9px;
+  background: var(--chip);
+  border-radius: var(--r-pill);
+  padding: 7px 15px;
+  font-size: 12.5px;
+  color: var(--ink-muted);
+}
+
+.cnp-chip strong {
+  font-family: var(--font-display);
+  font-size: 13.5px;
+  color: var(--ink);
+  letter-spacing: 0.3px;
+}
+
+.cnp-chip__im { color: var(--wine); font-weight: 600; }
+
+/* Una tabla sin coincidencias se atenúa pero no se esconde: saber que se buscó
+   en ella y salió vacía es parte del resultado. */
+.cnp-chip--vacio { opacity: .45; }
+
+/* ── Barra de la tabla ──────────────────────────────────────── */
+
+.cnp-barra {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0 14px;
+  flex-wrap: wrap;
+}
+
+.cnp-barra .field { min-width: 280px; flex: 1 1 280px; }
+
+.cnp-contador {
+  margin-left: auto;
+  font-size: 12.5px;
+  color: var(--ink-faint);
+  white-space: nowrap;
+}
+
+/* ── Tabla ──────────────────────────────────────────────────── */
+
+/* Tabla · QNA · Tipo · UR · RFC · Nombre · Concepto · Slot · AQ · Importe */
+.cnp-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 0.5fr 0.5fr 0.5fr 1.2fr 2.2fr 0.9fr 0.5fr 0.7fr 1fr;
+  gap: 10px;
+}
+
+.cnp-cuerpo { max-height: 560px; overflow-y: auto; }
+
+.cnp-tabla-nom { font-weight: 600; font-size: 12.5px; }
+
+.cnp-rfc { letter-spacing: 0.3px; color: var(--ink-muted); }
+
+/* El nombre es el campo largo y el único que puede desbordar; se recorta con
+   elipsis y el título completo queda en el tooltip. */
+.cnp-nomb {
+  color: var(--ink-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cnp-clave {
+  background: var(--chip);
+  border-radius: var(--r-chip);
+  padding: 3px 8px;
+  font-family: var(--font-display);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--wine);
+  letter-spacing: 0.4px;
+}
+
+.cnp-suave { color: var(--ink-faint); font-size: 12.5px; }
+
+/* Cifras tabulares y a la derecha: así los importes se comparan de un vistazo. */
+.cnp-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.cnp-mas { display: block; margin: 18px auto 0; }
+
+/* ── Catálogo de conceptos (modal) ──────────────────────────── */
+
+/* Es un directorio de significados: clave, qué quiere decir y de qué tabla
+   salió. Aquí no hay importes ni nada que venga de la nómina. */
+
+.cnp-catalogo-btn { align-self: flex-end; }
+
+.cnp-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 80; /* sobre el rail (60) y el velo de carga (40) */
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.cnp-modal[hidden] { display: none; }
+
+.cnp-modal__fondo {
+  position: absolute;
+  inset: 0;
+  background: var(--veil);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.cnp-modal__hoja {
+  position: relative;
+  width: 100%;
+  max-width: 720px;
+  max-height: 86vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow-sheet);
+  overflow: hidden;
+}
+
+.cnp-modal__cabeza {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px 26px 14px;
+}
+
+.cnp-modal__titulo {
+  margin: 4px 0 0;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.cnp-modal__sub { font-size: 12.5px; color: var(--ink-muted); margin-top: 3px; }
+
+.cnp-modal__cerrar {
+  border: 0;
+  background: transparent;
+  color: var(--ink-faint);
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.cnp-modal__cerrar:hover { color: var(--wine); }
+
+.cnp-modal__barra {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 26px 14px;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.cnp-modal__barra .field { flex: 1 1 auto; }
+.cnp-modal__barra .cnp-contador { margin-left: 0; }
+
+.cnp-modal__cuerpo {
+  overflow-y: auto;
+  padding: 8px 26px 12px;
+  min-height: 0;
+}
+
+.cnp-modal__cargando {
+  padding: 26px 0;
+  text-align: center;
+  color: var(--ink-muted);
+  font-size: 13px;
+}
+
+.cnp-modal__pie {
+  padding: 13px 26px;
+  border-top: 1px solid var(--border-soft);
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--ink-muted);
+  background: var(--table-head);
+}
+
+.cnp-modal__pie code {
+  background: var(--chip);
+  border-radius: var(--r-chip);
+  padding: 1px 5px;
+  color: var(--wine);
+}
+
+/* ── Renglón del catálogo ───────────────────────────────────── */
+
+.cnp-cat {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.cnp-cat:last-child { border-bottom: 0; }
+
+/* La clave es un botón: lleva a buscarla en la nómina, encadenando "qué
+   significa" con "quién lo tiene". */
+.cnp-cat__clave {
+  flex: 0 0 auto;
+  border: 0;
+  cursor: pointer;
+  font-family: var(--font-display);
+  min-width: 58px;
+  text-align: center;
+  transition: background .15s ease;
+}
+
+.cnp-cat__clave:hover { background: var(--wine); color: var(--on-wine); }
+
+.cnp-cat__texto { min-width: 0; flex: 1; }
+
+.cnp-cat__desc { font-size: 13px; line-height: 1.45; color: var(--ink); }
+
+.cnp-cat__alt {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--ink-muted);
+  margin-top: 3px;
+  padding-left: 10px;
+  border-left: 2px solid var(--border);
+}
+
+.cnp-cat__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 5px;
+  font-size: 11.5px;
+}
+
+.cnp-nat {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+  border-radius: var(--r-chip);
+  padding: 2px 6px;
+}
+
+.cnp-nat--p { background: var(--imp-bg); color: var(--imp-text); }
+.cnp-nat--d { background: var(--can-bg); color: var(--can-text); }
+
+/* ── Angosto ────────────────────────────────────────────────── */
+
+/* Por debajo de ~1100px las diez columnas no caben sin apretujar el nombre, así
+   que la tabla se desplaza en horizontal con un ancho mínimo en vez de romperse. */
+@media (max-width: 1100px) {
+  .cnp-cuerpo, .tabla__head { min-width: 1040px; }
+  .tabla { overflow-x: auto; }
+  .cnp-contador { margin-left: 0; }
+}

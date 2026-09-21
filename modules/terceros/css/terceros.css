@@ -1,0 +1,413 @@
+/* ═══════════════════════════════════════════════════════════════
+   Terceros — descuentos a terceros de la quincena.
+   Solo lo propio del módulo: superficies, tinta, radios y fuentes
+   salen de los tokens de css/theme.css, así que el tema oscuro y
+   cualquier ajuste de paleta se heredan sin tocar este archivo.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Formulario ─────────────────────────────────────────────── */
+
+.ter-fila {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.ter-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  flex: 1 1 260px;
+}
+
+/* El ejercicio y la quincena son cortos y de ancho fijo: si crecieran como el
+   selector de grupo, la fila se vería descuadrada al envolver. */
+.ter-campo--corto { flex: 0 0 150px; }
+
+.ter-campo .field { width: 100%; }
+
+.ter-ayuda {
+  margin-top: 14px;
+  font-size: 12.5px;
+  color: var(--ink-muted);
+  line-height: 1.55;
+}
+
+.ter-ayuda code {
+  background: var(--chip);
+  border-radius: var(--r-chip);
+  padding: 2px 6px;
+  font-size: 12px;
+  color: var(--wine);
+}
+
+/* ── Aviso (sin datos, error) ───────────────────────────────── */
+
+.ter-aviso {
+  background: var(--act-bg);
+  color: var(--act-text);
+  border-radius: var(--r-tile);
+  padding: 16px 22px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+/* ── Métricas ───────────────────────────────────────────────── */
+
+.ter-metricas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.ter-tile {
+  padding: 20px 24px;
+  border-radius: var(--r-tile);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ter-tile .figure { font-size: 27px; }
+
+/* El importe total es el número largo de la fila; se encoge para que no parta
+   renglón en pantallas angostas. */
+.ter-tile .figure#m-importe { font-size: 23px; }
+
+/* ── Desglose por grupo ─────────────────────────────────────── */
+
+.ter-desglose {
+  padding: 20px 24px;
+  border-radius: var(--r-tile);
+  margin-bottom: 16px;
+}
+
+.ter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 14px;
+}
+
+.ter-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 9px;
+  background: var(--chip);
+  border-radius: var(--r-pill);
+  padding: 7px 15px;
+  font-size: 12.5px;
+  color: var(--ink-muted);
+}
+
+.ter-chip strong {
+  font-family: var(--font-display);
+  font-size: 13.5px;
+  color: var(--ink);
+  letter-spacing: 0.3px;
+}
+
+.ter-chip__im { color: var(--wine); font-weight: 600; }
+
+/* Un grupo en ceros se atenúa pero no se esconde: que salió vacío es parte del
+   resultado del cierre. */
+.ter-chip--vacio { opacity: .45; }
+
+/* ── Barra de la tabla ──────────────────────────────────────── */
+
+.ter-barra {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0 14px;
+  flex-wrap: wrap;
+}
+
+.ter-barra .field { min-width: 280px; flex: 1 1 280px; }
+
+/* El botón de descarga es un <a> porque apunta a un endpoint que responde con
+   el archivo; hay que darle el alto de un botón a mano. */
+.ter-barra .btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.ter-contador {
+  margin-left: auto;
+  font-size: 12.5px;
+  color: var(--ink-faint);
+  white-space: nowrap;
+}
+
+/* ── Tabla ──────────────────────────────────────────────────── */
+
+/* Grupo · UR · Rama · Tipo · Banco · Concepto · Importe */
+.ter-grid {
+  display: grid;
+  grid-template-columns: 2.4fr 0.6fr 0.6fr 0.6fr 1.1fr 0.9fr 1.2fr;
+  gap: 10px;
+}
+
+.ter-cuerpo { max-height: 560px; overflow-y: auto; }
+
+/* El grupo es el campo largo y el único que puede desbordar; se recorta con
+   elipsis y el nombre completo, con guiones bajos, queda en el tooltip. */
+.ter-grupo {
+  font-weight: 600;
+  font-size: 12.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ter-clave {
+  background: var(--chip);
+  border-radius: var(--r-chip);
+  padding: 3px 8px;
+  font-family: var(--font-display);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--wine);
+  letter-spacing: 0.4px;
+}
+
+.ter-suave { color: var(--ink-faint); font-size: 12.5px; }
+
+/* Cifras tabulares y a la derecha: así los importes se comparan de un vistazo. */
+.ter-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.ter-mas { display: block; margin: 18px auto 0; }
+
+/* ── Panel del catálogo de grupos ───────────────────────────── */
+
+/* Solo lo ve quien puede administrarlo; el PHP ni siquiera pinta el markup
+   para los demás. */
+
+.ter-admin { align-self: flex-end; }
+
+.ter-panel {
+  position: fixed;
+  inset: 0;
+  z-index: 80; /* por encima del rail (60) y del velo de carga (40) */
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.ter-panel[hidden] { display: none; }
+
+.ter-panel__fondo {
+  position: absolute;
+  inset: 0;
+  background: var(--veil);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.ter-panel__hoja {
+  position: relative;
+  width: 100%;
+  max-width: 860px;
+  max-height: 86vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow-sheet);
+  overflow: hidden;
+}
+
+.ter-panel__cabeza {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px 26px 16px;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.ter-panel__titulo {
+  margin: 4px 0 0;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.ter-panel__cerrar {
+  border: 0;
+  background: transparent;
+  color: var(--ink-faint);
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.ter-panel__cerrar:hover { color: var(--wine); }
+
+/* Dos columnas: el catálogo a la izquierda, el formulario a la derecha. Se ve
+   lo que ya hay mientras se escribe lo nuevo, que es como se evita duplicar un
+   prefijo por descuido. */
+.ter-panel__cuerpo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.ter-panel__lista {
+  overflow-y: auto;
+  padding: 18px 20px 22px 26px;
+  border-right: 1px solid var(--border-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ter-panel__form {
+  overflow-y: auto;
+  padding: 18px 26px 22px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ter-panel__cargando { color: var(--ink-faint); font-size: 13px; padding: 8px 0; }
+
+/* ── Tarjeta de grupo ───────────────────────────────────────── */
+
+.ter-grupo {
+  border: 1px solid var(--border-soft);
+  border-radius: var(--r-tile);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.ter-grupo__cab { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+.ter-grupo__nombre {
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.ter-grupo__prefijos { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.ter-grupo__acciones { display: flex; gap: 6px; }
+
+.ter-tag {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+  border-radius: var(--r-chip);
+  padding: 2px 6px;
+}
+
+.ter-tag--nuevo    { background: var(--imp-bg); color: var(--imp-text); }
+.ter-tag--cambiado { background: var(--act-bg); color: var(--act-text); }
+
+.ter-mini {
+  padding: 4px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--ink-muted);
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color .15s ease, color .15s ease;
+}
+
+.ter-mini:hover { border-color: var(--wine-soft); color: var(--wine); }
+
+/* ── Formulario del panel ───────────────────────────────────── */
+
+.ter-panel__ayuda {
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--ink-muted);
+}
+
+.ter-panel__ayuda code {
+  background: var(--chip);
+  border-radius: var(--r-chip);
+  padding: 1px 5px;
+  color: var(--wine);
+}
+
+.ter-panel__botones { display: flex; gap: 8px; flex-wrap: wrap; }
+.ter-panel__botones .btn-primary { flex: 1 1 auto; }
+
+.ter-aviso--ok    { background: var(--imp-bg); color: var(--imp-text); }
+.ter-aviso--error { background: var(--can-bg); color: var(--can-text); }
+
+/* ── Resultado de consultar un prefijo ──────────────────────── */
+
+.ter-prueba {
+  border-top: 1px solid var(--border-soft);
+  padding-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 12.5px;
+}
+
+.ter-prueba__grupo { display: flex; flex-direction: column; gap: 5px; }
+
+.ter-prueba__cab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding-bottom: 3px;
+}
+
+.ter-prueba__cab .ter-num { margin-left: auto; }
+
+.ter-prueba__clave {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-left: 4px;
+}
+
+.ter-prueba__clave .ter-num { margin-left: auto; }
+
+/* ── Angosto ────────────────────────────────────────────────── */
+
+/* Bajo ~760px las dos columnas del panel no caben: se apilan y el catálogo
+   pierde su borde derecho. */
+@media (max-width: 760px) {
+  .ter-panel__cuerpo { grid-template-columns: 1fr; }
+  .ter-panel__lista {
+    border-right: 0;
+    border-bottom: 1px solid var(--border-soft);
+    padding: 18px 22px;
+    max-height: 34vh;
+  }
+  .ter-panel__form { padding: 18px 22px 22px; }
+}
+
+/* Por debajo de ~900px las siete columnas no caben sin apretujar el nombre del
+   grupo, así que la tabla se desplaza en horizontal con un ancho mínimo en vez
+   de romperse. */
+@media (max-width: 900px) {
+  .ter-cuerpo, .tabla__head { min-width: 860px; }
+  .tabla { overflow-x: auto; }
+  .ter-contador { margin-left: 0; }
+}

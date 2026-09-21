@@ -1,0 +1,373 @@
+/* ═══════════════════════════════════════════════════════════════
+   Timbrado — tokens de tema (rediseño premium)
+   Reemplaza el theme.css actual de monitor/css/.
+   Identidad: neutros cálidos + vino oxblood como acento y latón
+   de apoyo. El color NO vive en las superficies (eso era lo que
+   hacía leer la UI como sitio de gobierno): vive en el hero,
+   en el acento y en los estados.
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Superficies (neutro cálido, sin teñir) */
+  --bg: #F7F4F2;
+  --rail: #FCFAF9;
+  --card: #FFFFFF;
+  --chip: #F3EFED;
+  --hover: #F7F3F1;
+  --table-head: #FBF8F7;
+
+  /* ── Líneas */
+  --border: #E6E0DC;
+  --border-soft: #F0EBE8;
+  --track: #EDE8E5;
+
+  /* ── Tinta (3 niveles, todos ≥4.5:1 sobre --card) */
+  --ink: #191516;
+  --ink-muted: #5E5754;
+  --ink-faint: #6B6360;
+
+  /* ── Acento vino */
+  --wine: #6E1230;
+  --wine-soft: #C08D9A;
+  --on-wine: #FFF6F2;
+
+  /* ── Hero (tarjeta protagonista + cabecera de ficha) */
+  --hero-bg: #4A0F22;
+  --hero-ink: #FDF1F2;
+  --hero-ink-soft: rgba(253, 241, 242, 0.82);
+  --hero-ink-faint: rgba(253, 241, 242, 0.60);
+
+  /* ── Estados de timbrado: punto/indicador */
+  --imp-dot: #1B7F4B;
+  --act-dot: #B8801C;
+  --can-dot: #B3261E;
+  --inv-dot: #8A8285;
+
+  /* ── Estados de timbrado: chip (fondo + texto) */
+  --imp-bg: #E4F3E9;  --imp-text: #125234;
+  --act-bg: #FAF0D9;  --act-text: #6E4E11;
+  --can-bg: #FAE6E3;  --can-text: #7C1911;
+  --inv-bg: #EFEBE9;  --inv-text: #4E4749;
+
+  /* ── Estados sobre el hero (más luminosos para contrastar
+        contra el vino profundo) */
+  --hero-imp: #7BD9A5;
+  --hero-act: #F2C45E;
+  --hero-can: #FF9483;
+  --hero-inv: #D8CBCE;
+
+  /* ── Loader */
+  --veil: rgba(247, 244, 242, 0.76);
+  --glow: rgba(110, 18, 48, 0.13);
+
+  /* ── Serie categórica: distribución por producto */
+  --dist-1: #6E1230;
+  --dist-2: #96304A;
+  --dist-3: #A66A3C;
+  --dist-4: #4E6B4C;
+  --dist-5: #6B4E7E;
+  --dist-6: #8C5F4A;
+  --dist-7: #3F5C72;
+  --dist-8: #7A6A4E;
+
+  /* ── Tipografía */
+  --font-ui: 'Roboto Flex', system-ui, sans-serif;
+  --font-display: 'Roboto Serif', Georgia, serif;
+
+  /* ── Radios */
+  --r-hero: 28px;
+  --r-card: 24px;
+  --r-tile: 22px;
+  --r-field: 14px;
+  --r-chip: 8px;
+  --r-pill: 999px;
+
+  /* ── Sombras (muy bajas, difusas: la elevación viene del
+        hairline, no de la sombra) */
+  --shadow-hero: 0 22px 44px -28px rgba(70, 12, 30, 0.55);
+  --shadow-card: 0 14px 30px -26px rgba(40, 20, 25, 0.35);
+  --shadow-sheet: 0 22px 48px -32px rgba(40, 20, 25, 0.42);
+}
+
+[data-theme="dark"] {
+  --bg: #131011;
+  --rail: #171314;
+  --card: #1C1819;
+  --chip: #252021;
+  --hover: #232021;
+  --table-head: #1F1B1C;
+
+  --border: #2E2829;
+  --border-soft: #262122;
+  --track: #2B2526;
+
+  --ink: #F3EEEC;
+  --ink-muted: #BEB4B1;
+  --ink-faint: #A79D9A;
+
+  --wine: #E39AA8;
+  --wine-soft: #C9808F;
+  --on-wine: #3A0C1B;
+
+  --hero-bg: #3A0C1B;
+  --hero-ink: #FCEDEF;
+  --hero-ink-soft: rgba(252, 237, 239, 0.80);
+  --hero-ink-faint: rgba(252, 237, 239, 0.58);
+
+  --imp-dot: #58C98C;
+  --act-dot: #E0A93A;
+  --can-dot: #E8705F;
+  --inv-dot: #8E8688;
+
+  --imp-bg: #183527;  --imp-text: #9EE0BA;
+  --act-bg: #3A2D10;  --act-text: #EACB86;
+  --can-bg: #3B1A16;  --can-text: #F0AFA3;
+  --inv-bg: #282425;  --inv-text: #B9B1B2;
+
+  --hero-imp: #7BD9A5;
+  --hero-act: #F2C45E;
+  --hero-can: #FF9483;
+  --hero-inv: #CDBFC2;
+
+  --veil: rgba(19, 16, 17, 0.74);
+  --glow: rgba(227, 154, 168, 0.20);
+
+  --dist-1: #E39AA8;
+  --dist-2: #C4808F;
+  --dist-3: #D9A56A;
+  --dist-4: #9FB79A;
+  --dist-5: #B39BC4;
+  --dist-6: #C9A48A;
+  --dist-7: #8FA9BC;
+  --dist-8: #B8A88F;
+}
+
+/* ═══ Primitivas reutilizables ═══════════════════════════════ */
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-variant-numeric: tabular-nums; /* cifras alineadas en tablas */
+}
+
+/* Micro-etiqueta: el recurso tipográfico que más "premium" aporta.
+   Úsala para todos los encabezados de sección y de dato. */
+.eyebrow {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* Cifra grande. Siempre en serif, siempre con tracking negativo. */
+.figure {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow-card);
+}
+
+.hero {
+  background: var(--hero-bg);
+  color: var(--hero-ink);
+  border-radius: var(--r-hero);
+  box-shadow: var(--shadow-hero);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Halo del hero: va como pseudo-elemento, no como gradiente de fondo. */
+.hero::before {
+  content: "";
+  position: absolute;
+  top: -120px; right: -90px;
+  width: 300px; height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,220,225,0.16), rgba(255,220,225,0) 70%);
+  pointer-events: none;
+}
+
+/* Chip de estado: punto + texto. El punto es lo que hace legible
+   el estado a simple vista; no lo quites. */
+.chip-estado {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px 3px 8px;
+  border-radius: var(--r-chip);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+.chip-estado > .dot { width: 6px; height: 6px; border-radius: 50%; }
+
+.chip-estado.imp { background: var(--imp-bg); color: var(--imp-text); }
+.chip-estado.act { background: var(--act-bg); color: var(--act-text); }
+.chip-estado.can { background: var(--can-bg); color: var(--can-text); }
+.chip-estado.inv { background: var(--inv-bg); color: var(--inv-text); }
+.chip-estado.imp > .dot { background: var(--imp-dot); }
+.chip-estado.act > .dot { background: var(--act-dot); }
+.chip-estado.can > .dot { background: var(--can-dot); }
+.chip-estado.inv > .dot { background: var(--inv-dot); }
+
+/* Botón primario */
+.btn-primary {
+  padding: 13px 26px;
+  border: 0;
+  border-radius: var(--r-field);
+  background: var(--wine);
+  color: var(--on-wine);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity .18s ease;
+}
+.btn-primary:hover { opacity: .88; }
+
+/* Botón secundario / fantasma */
+.btn-ghost {
+  padding: 11px 22px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--ink);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color .18s ease;
+}
+.btn-ghost:hover { border-color: var(--wine); }
+
+/* Campos */
+.field {
+  padding: 13px 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-field);
+  background: var(--card);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 13.5px;
+}
+.field:focus { outline: none; border-color: var(--wine); }
+.field--pill { border-radius: var(--r-pill); padding: 11px 18px; }
+
+/* Tablas: hairlines, nunca zebra striping ni bordes completos. */
+.tabla { background: var(--card); border: 1px solid var(--border); border-radius: var(--r-card); overflow: hidden; }
+.tabla__head {
+  padding: 15px 26px;
+  background: var(--table-head);
+  border-bottom: 1px solid var(--border);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.tabla__row {
+  padding: 13px 26px;
+  border-bottom: 1px solid var(--border-soft);
+  font-size: 13px;
+  transition: background .14s ease;
+}
+.tabla__row:hover { background: var(--hover); }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(120,105,105,0.35); border-radius: 8px; }
+
+/* ═══ Movimiento ═════════════════════════════════════════════
+   Una sola curva para todo lo que entra: cubic-bezier(.2,.8,.2,1).
+   ═══════════════════════════════════════════════════════════ */
+
+@keyframes om-spin      { to { transform: rotate(360deg); } }
+@keyframes om-spin-back { to { transform: rotate(-360deg); } }
+
+/* El arco crece y se encoge mientras gira: el loader respira
+   en vez de girar mecánicamente. */
+@keyframes om-arc {
+  0%   { stroke-dasharray: 14 250;  stroke-dashoffset: 0; }
+  50%  { stroke-dasharray: 150 250; stroke-dashoffset: -32; }
+  100% { stroke-dasharray: 14 250;  stroke-dashoffset: -196; }
+}
+@keyframes om-glow {
+  0%, 100% { transform: scale(1);    opacity: .5; }
+  50%      { transform: scale(1.16); opacity: .82; }
+}
+@keyframes om-veil  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes om-sweep { from { transform: translateX(-100%); } to { transform: translateX(300%); } }
+@keyframes om-dot {
+  0%, 100% { opacity: .25; transform: translateY(0); }
+  50%      { opacity: 1;   transform: translateY(-3px); }
+}
+
+/* Entradas */
+@keyframes om-rise-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes om-pop     { from { opacity: 0; transform: scale(.86); }      to { opacity: 1; transform: scale(1); } }
+@keyframes om-grow    { from { transform: scaleY(0); opacity: .4; }      to { transform: scaleY(1); opacity: 1; } }
+@keyframes om-sheen   { from { transform: translateX(-120%) skewX(-18deg); } to { transform: translateX(320%) skewX(-18deg); } }
+
+/* Velo de carga. Va sobre el contenedor del contenido, NUNCA sobre
+   toda la página: el rail y la cabecera deben seguir legibles. */
+.loader {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  background: var(--veil);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+  animation: om-veil .22s ease both;
+}
+.loader__label {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+.loader__bar { width: 132px; height: 3px; border-radius: var(--r-pill); background: var(--track); overflow: hidden; }
+.loader__bar > span {
+  display: block;
+  width: 34%;
+  height: 100%;
+  border-radius: var(--r-pill);
+  background: linear-gradient(90deg, var(--wine-soft), var(--wine), var(--wine-soft));
+  animation: om-sweep 1.25s cubic-bezier(.45,.05,.55,.95) infinite;
+}
+.loader__dots { display: flex; gap: 5px; }
+.loader__dots > span {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--wine-soft);
+  animation: om-dot 1.2s ease-in-out infinite;
+}
+.loader__dots > span:nth-child(2) { animation-delay: .16s; }
+.loader__dots > span:nth-child(3) { animation-delay: .32s; }
+
+/* Bloques que entran al montar una vista. El desfase se calcula por
+   ítem (--i) para no escribir delays a mano en el markup. */
+.rise-in {
+  animation: om-rise-in .5s cubic-bezier(.2,.8,.2,1) both;
+  animation-delay: calc(var(--i, 0) * 60ms);
+}
+.ring-in  { animation: om-pop .55s cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(var(--i, 0) * 60ms); }
+.bar-grow { transform-origin: bottom; animation: om-grow .6s cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(var(--i, 0) * 70ms); }
+
+@media (prefers-reduced-motion: reduce) {
+  .rise-in, .ring-in, .bar-grow { animation: none; }
+  .loader svg [style*="om-arc"], .loader__bar > span, .loader__dots > span { animation-duration: 2.4s; }
+}

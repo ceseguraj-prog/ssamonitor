@@ -1,0 +1,3 @@
+# Paquetes generados y sus archivos intermedios: se borran solos tras una hora.
+*.zip
+*.tmp

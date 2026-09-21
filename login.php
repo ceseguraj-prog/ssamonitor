@@ -25,6 +25,7 @@ try {
         'SELECT user, nombre, password FROM users WHERE user = ?',
         [$username]
     );
+
 } catch (\Throwable $e) {
     header('Location: index.php?error=1');
     exit;
@@ -35,6 +36,9 @@ $user = $rows[0] ?? null;
 if ($user && password_verify($password, $user['password'])) {
     session_regenerate_id(true);
     $_SESSION['usuario'] = $user['nombre'];
+    // El login, aparte del nombre para mostrar: es el identificador estable
+    // contra el que se resuelven los permisos de módulos.
+    $_SESSION['user'] = $user['user'];
     header('Location: home.php');
     exit;
 }
