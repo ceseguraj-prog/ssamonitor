@@ -104,6 +104,13 @@
 
     function pintarLista(id, archivos, clave) {
         const lista = document.getElementById(id);
+        const caja = lista.closest('.tg7-carga');
+
+        // Con archivos la tarjeta se parte en dos: la zona de carga a la
+        // izquierda y esta lista a la derecha, con su propio desplazamiento.
+        if (caja) {
+            caja.classList.toggle('con-archivos', archivos.length > 0);
+        }
 
         if (!archivos.length) {
             lista.innerHTML = '';
@@ -206,7 +213,32 @@
             } finally {
                 cargando(false);
             }
+
+            // Después del `finally`, con el velo ya quitado: si se desplaza
+            // antes, el movimiento ocurre detrás del velo y no se ve.
+            if (!resultado.hidden) {
+                irAlResultado();
+            }
         }, 30);
+    }
+
+    /**
+     * Lleva la vista al resultado en cuanto termina el cruce.
+     *
+     * El formulario ocupa la pantalla completa, así que sin esto el resultado
+     * queda abajo y parece que no pasó nada. Quien desplaza es
+     * `.view-container` —el rail y la cabecera no se mueven—, y
+     * `scrollIntoView()` sube solo hasta ese contenedor.
+     *
+     * El foco se mueve con `preventScroll` para no pelearse con la animación:
+     * sin él, enfocar provoca su propio salto instantáneo.
+     */
+    function irAlResultado() {
+        const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        resultado.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+        resultado.setAttribute('tabindex', '-1');
+        resultado.focus({ preventScroll: true });
     }
 
     function cargando(activo, etiqueta) {
@@ -530,6 +562,69 @@
         document.body.removeChild(a);
 
         setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    /* ── Ayuda contextual ────────────────────────────────────────────────
+     *
+     * Un solo modal para toda la pantalla. El texto vive en el HTML, en
+     * bloques ocultos marcados con `data-ayuda-de`, y cada botón «?» trae la
+     * clave del que le toca. Así la explicación se corrige en index.php, que
+     * es donde se lee como prosa, sin pasar por este archivo.
+     */
+
+    const modal = document.getElementById('tg7-modal');
+    const modalKicker = document.getElementById('tg7-modal-kicker');
+    const modalTitulo = document.getElementById('tg7-modal-titulo');
+    const modalCuerpo = document.getElementById('tg7-modal-cuerpo');
+
+    /** Quién abrió el modal, para devolverle el foco al cerrar. */
+    let abridor = null;
+
+    // El clic se escucha en el documento porque varios botones «?» viven en
+    // tarjetas que nacen ocultas y se muestran hasta que hay resultado.
+    document.addEventListener('click', function (evento) {
+        const boton = evento.target.closest ? evento.target.closest('[data-ayuda]') : null;
+
+        if (boton) {
+            abrirAyuda(boton.dataset.ayuda, boton);
+
+            return;
+        }
+
+        if (!modal.hidden && evento.target.closest && evento.target.closest('[data-cerrar]')) {
+            cerrarAyuda();
+        }
+    });
+
+    document.addEventListener('keydown', function (evento) {
+        if (evento.key === 'Escape' && !modal.hidden) {
+            cerrarAyuda();
+        }
+    });
+
+    function abrirAyuda(clave, boton) {
+        const fuente = document.querySelector('[data-ayuda-de="' + clave + '"]');
+
+        if (!fuente) {
+            return;
+        }
+
+        abridor = boton || null;
+        modalKicker.textContent = fuente.dataset.kicker || '';
+        modalTitulo.textContent = fuente.dataset.titulo || '';
+        modalCuerpo.innerHTML = fuente.innerHTML;
+        modalCuerpo.scrollTop = 0;
+        modal.hidden = false;
+        modal.querySelector('.tg7-modal__cerrar').focus();
+    }
+
+    function cerrarAyuda() {
+        modal.hidden = true;
+
+        if (abridor) {
+            abridor.focus();
+            abridor = null;
+        }
     }
 
     /* ── Utilidades ──────────────────────────────────────────────────────── */

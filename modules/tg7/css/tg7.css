@@ -1,28 +1,214 @@
 /* Estilos propios del módulo TG-7. Los colores salen de los tokens de
    css/theme.css para que el modo oscuro funcione sin reglas aparte. */
 
-/* Zona de archivos: borde punteado en vino suave, igual que el corrector SQL,
-   para que las dos herramientas de archivo se lean como la misma familia. */
+/* Sin tope de ancho: las demás pantallas del sistema ocupan todo el
+   .view-container y ésta no tiene por qué dejar una franja en blanco a la
+   derecha. Quien acota es la reja de captura, más abajo. */
+.tg7-hoja { width: 100%; }
+
+/* ── Aviso de privacidad ─────────────────────────────────────────
+   La pantalla trabaja con RFC, CURP y sueldo de miles de personas, así que
+   que nada se suba a ningún lado es lo primero que hay que poder leer. Es la
+   única frase explicativa que se queda fuera del modal. */
+.tg7-intro {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    flex-wrap: wrap;
+    padding: 12px 18px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-soft);
+    border-radius: var(--r-field);
+    background: var(--chip);
+}
+.tg7-intro__icono { color: var(--wine); flex: 0 0 auto; }
+.tg7-intro p {
+    margin: 0;
+    flex: 1 1 260px;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--ink-muted);
+}
+
+.tg7-ayuda-enlace {
+    border: 0;
+    background: transparent;
+    padding: 0;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .2px;
+    color: var(--wine);
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+.tg7-ayuda-enlace:hover { opacity: .75; }
+
+/* ── Tarjeta de paso ─────────────────────────────────────────────
+   Todas las tarjetas de la pantalla son iguales: ícono, número de paso,
+   título, una línea de apoyo y el botón de ayuda. El detalle largo vive en
+   el modal, no aquí. */
+.tg7-paso { padding: 22px 26px 24px; }
+#tg7-resultado > .tg7-paso { margin-top: 18px; }
+
+/* ── Captura: dos columnas ───────────────────────────────────────
+   Las dos fuentes de archivo ocupan dos tercios y el encabezado el tercio
+   restante. El encabezado son ocho campos cortos, así que cabe de sobra al
+   lado y de paso se queda a la vista mientras se cargan los archivos —
+   es donde se revisa la clave de aportante antes de generar.
+
+   La columna de los archivos mide lo que necesita su renglón de descripción
+   para no partirse (591px la más larga, la del paso 2) y ni un pixel más:
+   son dos zonas de carga, no necesitan más caja. Todo lo demás se lo queda el
+   encabezado, que sí tiene ocho campos que acomodar.
+
+   Las columnas se estiran a la misma altura a propósito —sin `align-items:
+   start`—, para que el pie del encabezado cierre a la par del paso 2. */
+.tg7-captura {
+    display: grid;
+    grid-template-columns: minmax(320px, 620px) minmax(0, 1fr);
+    gap: 18px;
+}
+
+.tg7-captura__fuentes { display: grid; gap: 18px; }
+
+/* La tarjeta del encabezado se estira hasta igualar a las dos de la izquierda,
+   así que su contenido se reparte en alto: los campos arriba y la barra de
+   acción pegada abajo, a la altura del pie del paso 2. */
+.tg7-paso--lado { display: flex; flex-direction: column; }
+
+/* El `auto` se come el espacio sobrante; los 22px del margen de abajo de los
+   campos garantizan la separación mínima cuando no sobra ninguno. */
+.tg7-paso--lado .tg7-encabezado { margin-bottom: 22px; }
+.tg7-paso--lado .tg7-accion { margin-top: auto; }
+
+/* Cuántos campos por renglón. Va explícito y no con `auto-fit` porque son
+   ocho: en una pantalla ancha el cálculo automático mete seis y deja un 6+2,
+   que se lee peor que un 4+4 parejo. */
+.tg7-paso--lado .tg7-encabezado { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+@media (max-width: 1400px) {
+    .tg7-paso--lado .tg7-encabezado { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 1150px) {
+    .tg7-paso--lado .tg7-encabezado { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.tg7-cabeza {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.tg7-cabeza__icono {
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: var(--chip);
+    color: var(--wine);
+}
+
+.tg7-cabeza__texto { flex: 1 1 auto; min-width: 0; }
+
+.tg7-cabeza__titulo {
+    margin: 3px 0 0;
+    font-family: var(--font-display);
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -.2px;
+    color: var(--ink);
+}
+
+.tg7-cabeza__pie {
+    margin: 5px 0 0;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--ink-muted);
+}
+
+.tg7-cabeza__extra { flex: 0 0 auto; align-self: center; }
+
+/* El «?»: discreto en reposo, porque la mayoría de las veces no hace falta. */
+.tg7-ayuda-btn {
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--card);
+    color: var(--ink-faint);
+    cursor: pointer;
+    transition: color .16s ease, border-color .16s ease, background .16s ease;
+}
+.tg7-ayuda-btn:hover {
+    color: var(--wine);
+    border-color: var(--wine-soft);
+    background: var(--hover);
+}
+.tg7-ayuda-btn:focus-visible { outline: 2px solid var(--wine-soft); outline-offset: 2px; }
+
+/* ── Zona de archivos ────────────────────────────────────────────
+   Borde punteado en vino suave, igual que el corrector SQL, para que las dos
+   herramientas de archivo se lean como la misma familia. */
 .tg7-zona {
     cursor: pointer;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 10px;
-    padding: 12px 18px;
+    justify-content: center;
+    gap: 9px;
+    /* La altura la pone .tg7-carga; aquí solo se estira a la celda. */
+    padding: 22px 18px;
     border-radius: var(--r-field);
     border: 1px dashed var(--wine-soft);
     background: var(--bg);
     font-size: 13.5px;
     color: var(--ink-muted);
-    flex: 1;
-    min-width: 240px;
+    text-align: center;
     transition: border-color .18s ease, background .18s ease;
 }
-.tg7-zona:hover { border-color: var(--wine); }
+.tg7-zona:hover { border-color: var(--wine); background: var(--hover); }
+.tg7-zona svg { color: var(--wine); flex: 0 0 auto; }
 .tg7-zona.cargado { color: var(--ink); font-weight: 600; }
 
-/* Lista de archivos cargados. */
-.tg7-lista { list-style: none; margin: 14px 0 0; padding: 0; }
+/* ── Cuerpo de las tarjetas de carga ─────────────────────────────
+   Vacío: la zona ocupa todo el ancho. Con archivos: mitad zona, mitad lista.
+
+   La altura es fija en los dos estados —los mismos 148px— para que la tarjeta
+   no dé un salto al soltar el primer archivo ni siga creciendo con el
+   vigésimo. Cuando la lista se pasa, desplaza dentro de su mitad; la tarjeta
+   no se entera, y con eso el paso 3 de al lado tampoco cambia de alto. */
+.tg7-carga {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    height: 148px;
+}
+
+.tg7-carga.con-archivos { grid-template-columns: 1fr 1fr; }
+
+/* Sin archivos el <ul> sigue siendo celda de la reja y abriría un hueco. */
+.tg7-lista:empty { display: none; }
+
+/* Lista de archivos cargados. Desplaza dentro de su mitad. */
+.tg7-lista {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    overflow-y: auto;
+    min-height: 0;
+    /* Deja aire para la barra de desplazamiento sin encimarla al texto. */
+    padding-right: 6px;
+}
 .tg7-archivo {
     display: flex;
     flex-wrap: wrap;
@@ -65,15 +251,23 @@
 .tg7-campo-form select:focus { outline: none; border-color: var(--wine); }
 .tg7-campo-form .ayuda { font-size: 11px; color: var(--ink-faint); }
 
-/* Cifra de estadística: serif, como todas las cifras del sistema. */
-.tg7-stat .valor {
-    font-family: var(--font-display);
-    font-size: 25px;
-    font-weight: 500;
-    letter-spacing: -.5px;
-    margin-top: 8px;
+/* ── Barra de acción al pie de una tarjeta ───────────────────────── */
+.tg7-accion {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 22px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-soft);
 }
-.tg7-stat .valor.acento { color: var(--wine); }
+.tg7-accion__archivo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-right: auto;
+}
 
 /* Nombre del archivo que se va a generar, en monoespaciada porque cada
    carácter de la clave de aportante importa. */
@@ -90,9 +284,41 @@
     color: var(--can-text);
     border-radius: var(--r-card);
     padding: 16px 20px;
+    margin-top: 18px;
     font-size: 14px;
     line-height: 1.5;
 }
+
+/* ── Resultado ───────────────────────────────────────────────────── */
+
+/* Al terminar el cruce se le manda el foco para que quien navega con teclado
+   o lector de pantalla aterrice aquí. Es un contenedor, no un control: el
+   recuadro de foco sobraría. */
+#tg7-resultado:focus { outline: none; }
+
+.tg7-resumen { font-size: 12.5px; color: var(--ink-muted); margin-bottom: 20px; }
+
+.tg7-tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 18px;
+}
+
+/* Cifra de estadística: serif, como todas las cifras del sistema. */
+.tg7-stat .valor {
+    font-family: var(--font-display);
+    font-size: 25px;
+    font-weight: 500;
+    letter-spacing: -.5px;
+    margin-top: 8px;
+}
+.tg7-stat .valor.acento { color: var(--wine); }
+
+.tg7-badge { font-size: 12px; color: var(--ink-faint); text-align: right; }
+.tg7-nota { font-size: 11.5px; color: var(--ink-faint); }
+
+.tg7-scroll { max-height: 360px; overflow-y: auto; }
+.tg7-scroll--alto { max-height: 420px; }
 
 /* Señales de calidad del origen: no son errores del archivo, son cosas que
    hay que reclamarle a quien genera la nómina. */
@@ -130,7 +356,131 @@
     font-weight: 600;
 }
 
+/* ── Modal de ayuda ──────────────────────────────────────────────
+   Misma estructura que el catálogo de conceptos: las dos pantallas abren una
+   hoja sobre un fondo velado, así que se comportan igual. */
+.tg7-ayudas { display: none; }
+
+.tg7-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 80; /* sobre el rail (60) y el velo de carga (40) */
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    box-sizing: border-box;
+}
+
+.tg7-modal[hidden] { display: none; }
+
+.tg7-modal__fondo {
+    position: absolute;
+    inset: 0;
+    background: var(--veil);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.tg7-modal__hoja {
+    position: relative;
+    width: 100%;
+    max-width: 640px;
+    max-height: 86vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-card);
+    box-shadow: var(--shadow-sheet);
+    overflow: hidden;
+}
+
+.tg7-modal__cabeza {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 22px 26px 14px;
+    border-bottom: 1px solid var(--border-soft);
+}
+
+.tg7-modal__titulo {
+    margin: 4px 0 0;
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.tg7-modal__cerrar {
+    border: 0;
+    background: transparent;
+    color: var(--ink-faint);
+    font-size: 26px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 4px;
+}
+.tg7-modal__cerrar:hover { color: var(--wine); }
+
+.tg7-modal__cuerpo {
+    overflow-y: auto;
+    padding: 6px 26px 22px;
+    min-height: 0;
+}
+
+/* Tipografía del texto de ayuda: es prosa, no interfaz. */
+.tg7-modal__cuerpo p {
+    margin: 14px 0 0;
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--ink-muted);
+}
+.tg7-modal__cuerpo h3 {
+    margin: 22px 0 0;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.1px;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+}
+.tg7-modal__cuerpo ul { margin: 12px 0 0; padding-left: 20px; }
+.tg7-modal__cuerpo li {
+    margin-top: 7px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--ink-muted);
+}
+.tg7-modal__cuerpo strong { color: var(--ink); font-weight: 600; }
+.tg7-modal__cuerpo code {
+    background: var(--chip);
+    border-radius: var(--r-chip);
+    padding: 1px 5px;
+    font-size: 12px;
+    color: var(--wine);
+}
+
+/* Debajo de esto el tercio de la derecha ya no da para dos campos por fila,
+   así que las tres tarjetas se apilan en el orden de los pasos. */
+@media (max-width: 1000px) {
+    .tg7-captura { grid-template-columns: 1fr; }
+    /* Apilado el encabezado vuelve a ser ancho, así que caben otra vez cuatro. */
+    .tg7-paso--lado .tg7-encabezado { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
 @media (max-width: 720px) {
+    .tg7-paso { padding: 20px 18px 22px; }
+    .tg7-paso--lado .tg7-encabezado { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    /* Dos mitades aquí saldrían a unos 130px cada una: no alcanza ni para el
+       nombre de un archivo. Se apilan, y la lista conserva su desplazamiento. */
+    .tg7-carga,
+    .tg7-carga.con-archivos { grid-template-columns: 1fr; height: auto; }
+    .tg7-zona { min-height: 104px; }
+    .tg7-lista { max-height: 148px; }
+    .tg7-cabeza { gap: 11px; }
+    .tg7-cabeza__extra { order: 4; width: 100%; text-align: left; }
+    .tg7-badge { text-align: left; }
+
     .tg7-fila-hallazgo,
     .tg7-fila-rechazo,
     .tg7-fila-incidencia,
