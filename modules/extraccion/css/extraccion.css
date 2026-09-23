@@ -1,0 +1,321 @@
+/**
+ * Cierre de Regularizados y Eventuales IMSS.
+ *
+ * Solo lo propio de esta pantalla: tokens, .card, .eyebrow, .figure,
+ * .chip-estado y .tabla salen de css/theme.css y aquí no se redefinen.
+ *
+ * La pantalla se lee en tres bloques, en el orden del trámite: qué entra
+ * (los grupos con sus casillas), qué salió (métricas y archivos) y el
+ * desglose fino al final, que es al que se baja solo quien va a cuadrar.
+ */
+
+/* ── Ayuda de cabecera ───────────────────────────────────────────────────── */
+
+.ext-ayuda {
+  padding: 16px 20px;
+  margin-bottom: 18px;
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--ink-muted);
+}
+
+.ext-ayuda code,
+.ext-grupo__criterio code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  background: var(--chip);
+  border-radius: 4px;
+  padding: 1px 5px;
+  color: var(--ink);
+}
+
+/* ── Aviso ───────────────────────────────────────────────────────────────── */
+
+.ext-aviso {
+  padding: 13px 18px;
+  margin-bottom: 18px;
+  border-radius: var(--r-card);
+  border: 1px solid var(--border);
+  background: var(--chip);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--ink-muted);
+}
+
+.ext-aviso--error {
+  background: var(--can-bg);
+  border-color: var(--can-dot);
+  color: var(--can-text);
+}
+
+/* ── Los dos grupos ──────────────────────────────────────────────────────── */
+
+.ext-grupos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  gap: 18px;
+}
+
+.ext-grupo { padding: 20px 22px; }
+
+.ext-grupo__cabeza {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 14px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.ext-grupo__criterio { margin-top: 6px; }
+
+.ext-grupo__total { text-align: right; white-space: nowrap; }
+.ext-grupo__total .figure { font-size: 26px; display: block; }
+
+.ext-grupo__pie {
+  font-size: 11px;
+  color: var(--ink-faint);
+  display: block;
+  margin-top: 5px;
+}
+
+/* ── Un producto, con su casilla ─────────────────────────────────────────── */
+
+.ext-producto {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 11px 6px;
+  border-bottom: 1px solid var(--border-soft);
+  cursor: pointer;
+}
+
+.ext-producto:last-child { border-bottom: none; }
+.ext-producto:hover { background: var(--hover); }
+
+.ext-producto input {
+  accent-color: var(--wine);
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  cursor: pointer;
+}
+
+/* Un producto desmarcado sigue leyéndose, pero deja de pesar en la vista. */
+.ext-producto:has(input:not(:checked)) { opacity: .45; }
+
+.ext-producto__clave {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  flex: 0 0 auto;
+}
+
+.ext-producto__chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.ext-producto__total {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-muted);
+  flex: 0 0 auto;
+  font-variant-numeric: tabular-nums;
+}
+
+/* En qué familia de producto vale el criterio, pegado al criterio mismo. */
+.ext-familia {
+  font-size: 11px;
+  color: var(--ink-faint);
+  white-space: nowrap;
+}
+
+/* ── Lo que se descarta adrede ───────────────────────────────────────────── */
+
+/* Cumplen el criterio pero no son producto de base. No entran al cierre y no
+   llevan casilla, pero se ven: apagados y apartados, que es lo que distingue
+   un filtro puesto a propósito de un producto que nadie miró. */
+.ext-descartados {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border);
+}
+
+.ext-descartados__titulo {
+  font-size: 11px;
+  color: var(--ink-faint);
+  margin-bottom: 8px;
+  cursor: help;
+}
+
+.ext-descartado {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  /* Alineado con los productos de arriba, que llevan la casilla por delante. */
+  padding: 8px 6px 8px 32px;
+  opacity: .5;
+}
+
+.ext-vacio {
+  padding: 18px 6px;
+  font-size: 13px;
+  color: var(--ink-faint);
+  line-height: 1.6;
+}
+
+/* ── Barra de acción ─────────────────────────────────────────────────────── */
+
+.ext-barra {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 22px 0 24px;
+}
+
+.ext-contador { font-size: 13px; color: var(--ink-faint); }
+
+/* ── Resultado ───────────────────────────────────────────────────────────── */
+
+.ext-metricas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.ext-tile { padding: 20px 22px; }
+.ext-tile .figure { font-size: 34px; margin-top: 10px; display: block; }
+
+.ext-tile__pie {
+  font-size: 11.5px;
+  color: var(--ink-faint);
+  margin-top: 7px;
+}
+
+.ext-tile__chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+.ext-salidas {
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) minmax(360px, 1.4fr);
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+@media (max-width: 900px) {
+  .ext-salidas { grid-template-columns: 1fr; }
+}
+
+/* ── Archivos ────────────────────────────────────────────────────────────── */
+
+.ext-descargas {
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ext-archivos { display: flex; flex-direction: column; gap: 8px; }
+
+.ext-archivo {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  text-decoration: none;
+  color: var(--ink);
+}
+
+.ext-archivo:hover {
+  border-color: var(--wine);
+  text-decoration: none;
+}
+
+.ext-archivo__nombre {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12.5px;
+}
+
+.ext-archivo__pie {
+  font-size: 11.5px;
+  color: var(--ink-faint);
+  white-space: nowrap;
+}
+
+.ext-zip { margin-top: auto; text-align: center; }
+
+/* ── La nota ─────────────────────────────────────────────────────────────── */
+
+.ext-nota {
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.ext-nota__cabeza {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* El markdown se muestra crudo, tal cual se va a pegar en las notas: verlo ya
+   formateado escondería justo lo que se está copiando. */
+.ext-markdown {
+  margin: 0;
+  padding: 16px 18px;
+  background: var(--chip);
+  border-radius: var(--r-card);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--ink);
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 420px;
+  overflow: auto;
+}
+
+/* ── Desglose ────────────────────────────────────────────────────────────── */
+
+.ext-detalle { padding: 20px 22px; }
+.ext-tabla { margin-top: 14px; }
+
+.ext-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 1.4fr repeat(5, minmax(64px, .6fr));
+  gap: 10px;
+  align-items: center;
+}
+
+.ext-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Un cero apagado deja que la vista salte directo a los estados que sí pesan. */
+.ext-cero { color: var(--ink-faint); opacity: .5; }
+
+.ext-fuerte { font-weight: 600; }
+
+.ext-clave {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12.5px;
+}

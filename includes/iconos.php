@@ -50,6 +50,11 @@ function iconoModulo(string $slug): string
         // del mismo trámite.
         'tg7' => '<path d="M6 3.2h7.4L19 8.6v12.2H6z"/><path d="M13.2 3.4V9h5.4"/>'
             . '<path d="M9.6 17.4V12.2h2a1.7 1.7 0 0 1 0 3.4H8.8"/><path d="M8.8 14.3h3.9"/>',
+        // Caja con una flecha que sale hacia arriba: los timbres que ya están
+        // en la base y se sacan de ahí para mandarlos a extracción.
+        'extraccion' => '<path d="M3.6 9.4h16.8v9.4a1.6 1.6 0 0 1-1.6 1.6H5.2a1.6 1.6 0 0 1-1.6-1.6z"/>'
+            . '<path d="M3.6 9.4 5.9 5.2h12.2l2.3 4.2"/>'
+            . '<path d="M12 17.2v-6.2"/><path d="M9.6 13.2 12 10.8l2.4 2.4"/>',
         // Persona con un escudo: quién puede entrar a qué.
         'permisos' => '<circle cx="10" cy="7.6" r="3.2"/>'
             . '<path d="M3.8 20.4c0-3.4 2.8-6.2 6.2-6.2 .9 0 1.7.2 2.5.5"/>'
