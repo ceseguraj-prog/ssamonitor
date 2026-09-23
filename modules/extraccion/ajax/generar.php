@@ -72,7 +72,20 @@ if (!class_exists('ZipArchive')) {
 $almacen = __DIR__ . '/../storage';
 
 if (!is_dir($almacen) && !@mkdir($almacen, 0775, true) && !is_dir($almacen)) {
-    responder(['error' => 'No se pudo preparar la carpeta de trabajo.'], 500);
+    responder(['error' => 'No se pudo preparar la carpeta de trabajo: ' . $almacen], 500);
+}
+
+// La carpeta viene en el repositorio (trae .gitignore y .htaccess), así que el
+// mkdir de arriba nunca se dispara y un despliegue donde el servidor web no
+// pueda escribir en ella pasa de largo hasta reventar al abrir el primer .txt,
+// con un "no se pudo abrir el archivo" que no le dice nada a nadie. Se
+// comprueba aquí, antes de consultar, y se nombra la carpeta.
+if (!is_writable($almacen)) {
+    responder([
+        'error' => 'La carpeta modules/extraccion/storage no acepta escritura, y ahí es donde '
+            . 'se arman los archivos antes de empaquetarlos. Dale permiso al usuario del '
+            . 'servidor web sobre ella (ruta real: ' . $almacen . ').',
+    ], 500);
 }
 
 limpiarAntiguos($almacen);

@@ -99,3 +99,17 @@ hacen falta fórmulas o fechas, ahí sí conviene la librería de verdad.
 `modulo.php` trae lista blanca (`usuarios`), porque equivocarse de periodo aquí
 cuesta una extracción entera. Para abrirlo a cualquier usuario autenticado,
 deja el arreglo vacío.
+
+## Al desplegar
+
+**El servidor web necesita permiso de escritura sobre `storage/`.** Ahí se
+arman los `.txt`, el Excel y la nota antes de empaquetarlos, y de ahí se borran
+solos a la hora.
+
+Ojo con esto: la carpeta **viene en el repositorio** (trae su `.gitignore` y su
+`.htaccess`), así que existe desde el primer despliegue y el `mkdir` de
+`ajax/generar.php` nunca llega a dispararse. Lo que falta en un servidor nuevo
+no es la carpeta, es el permiso.
+
+La pantalla lo comprueba al cargar y lo dice en rojo antes de que pulses
+Generar; el endpoint lo vuelve a comprobar por su cuenta.

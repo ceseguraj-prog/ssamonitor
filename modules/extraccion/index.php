@@ -25,6 +25,15 @@ use App\NominaRepository;
  */
 $periodo = periodoDeLaPeticion();
 
+/**
+ * Los archivos se arman en storage/ antes de empaquetarlos. La carpeta viene en
+ * el repositorio, así que existe siempre; lo que un despliegue nuevo no suele
+ * traer es el permiso de escritura para el usuario del servidor web. Se avisa al
+ * cargar y no hasta que alguien pulsa Generar, que es cuando ya esperó a que se
+ * consultara la quincena entera para nada. El endpoint lo comprueba otra vez.
+ */
+$almacenEscribible = is_dir(__DIR__ . '/storage') && is_writable(__DIR__ . '/storage');
+
 paginaInicio([
     'slug' => 'extraccion',
     'titulo' => 'Extracción de timbres',
@@ -49,6 +58,14 @@ selectorPeriodo($periodo, NominaRepository::aniosDisponibles());
     vea que se descartan adrede. Revisa las casillas antes de generar. Todo es de
     solo lectura; no se escribe nada en la base.
 </div>
+
+<?php if (!$almacenEscribible): ?>
+    <div class="ext-aviso ext-aviso--error">
+        La carpeta <code>modules/extraccion/storage</code> no acepta escritura, y ahí es
+        donde se arman los archivos antes de empaquetarlos. Mientras siga así, generar
+        va a fallar: el servidor web necesita permiso sobre ella.
+    </div>
+<?php endif; ?>
 
 <div id="aviso" class="ext-aviso" hidden></div>
 
