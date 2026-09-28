@@ -26,7 +26,7 @@ $moduloActual ??= '';
 <div class="rail-nav">
 
     <div class="rail-marca">
-        <a class="rail-logo" href="<?= $rutaBase ?>home.php" title="Ir al resumen">
+        <a class="rail-logo" href="<?= $rutaBase ?>home.php" title="Ir al inicio">
             <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><?= iconoLogo() ?></svg>
         </a>
         <span class="rail-nombre"><?= htmlspecialchars(APP_NOMBRE) ?></span>
