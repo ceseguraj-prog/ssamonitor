@@ -178,6 +178,9 @@
 
             { nombre: 'claveCobro', inicio: 71, largo: 30, tipo: 'texto', confirmado: true },
 
+            { nombre: 'tipoOrden', inicio: 101, largo: 2, tipo: 'texto', confirmado: false,
+              nota: 'Columna TPOD del reporte impreso: 10 = A (alta), 20 = B (baja), 30 = C (cambio). Deducido: la única línea 20 de la q20 es la baja con importe 0 que el .docx marca B. Ver TIPO_ORDEN.' },
+
             { nombre: 'plazoQuincenas', inicio: 103, largo: 2, tipo: 'numero', confirmado: true,
               nota: 'Coincide con la columna «Pzo.Qna.» del reporte impreso (48, 36, 24…).' },
 
@@ -200,6 +203,20 @@
     };
 
     /* ── Catálogos ──────────────────────────────────────────────────────── */
+
+    /**
+     * Tipo de orden de descuento (columna TPOD del reporte). El .txt lo trae
+     * en código numérico y el .docx en letra; aquí se unifica en letra.
+     *
+     * Una BAJA viene con importe 0 y plazo 1, y termina el préstamo desde su
+     * quincena: no es un préstamo que declarar. Observado entre q14 y q20:
+     * 9 bajas, 9 cambios, el resto altas.
+     */
+    const TIPO_ORDEN = {
+        '10': 'A', A: 'A',
+        '20': 'B', B: 'B',
+        '30': 'C', C: 'C'
+    };
 
     /** Sufijo del archivo de nómina → pagaduría. Constante dentro de cada archivo. */
     const PAGADURIA_POR_SUFIJO = {
@@ -348,6 +365,7 @@
         ORDENES_180,
         CAMPOS_DEL_SUMANDO,
         PAGADURIA_POR_SUFIJO,
+        TIPO_ORDEN,
         TIPO_NOMINA_POR_EXTENSION,
         CLAVES_HABITACION,
         TIPO_NOMBRAMIENTO_SIPE,

@@ -183,8 +183,9 @@
      */
     function validarRegistro(r, linea, e, motivos) {
         const h = [];
+        const rfc = r.rfc || '';
         const add = (campo, severidad, mensaje, valor) =>
-            h.push({ linea, campo, severidad, mensaje, valor });
+            h.push({ linea, rfc, campo, severidad, mensaje, valor });
         const err = (campo, mensaje, valor) => add(campo, 'error', mensaje, valor);
 
         // Lo que el cruce ya sabía de este registro. Cuando el cruce ya explicó
@@ -320,7 +321,7 @@
 
                 if (e.tipoNomina === '1' && (r.periodoDesde !== e.periodo || r.periodoHasta !== e.periodo)) {
                     err('periodoDesde', 'En nómina ordinaria ambos periodos deben coincidir con el del encabezado (' + e.periodo + ')',
-                        r.periodoDesde + '–' + r.periodoHasta);
+                        r.periodoDesde + '-' + r.periodoHasta);
                 }
             }
         }
@@ -353,12 +354,18 @@
         return { hallazgos, validos, rechazados, encabezadoInvalido };
     }
 
-    /** Bitácora en CSV, para que el operador corrija el origen. */
+    /**
+     * Bitácora en CSV, para que el operador corrija el origen.
+     *
+     * `linea` es la del archivo TG-7, pero un registro rechazado no está en
+     * ese archivo, así que el RFC va en su propia columna: es lo único con lo
+     * que se puede buscar al trabajador.
+     */
     function bitacoraCSV(hallazgos) {
-        const filas = [['linea', 'campo', 'severidad', 'mensaje', 'valor'].join(',')];
+        const filas = [['linea', 'rfc', 'campo', 'severidad', 'mensaje', 'valor'].join(',')];
 
         hallazgos.forEach(h => {
-            const celdas = [String(h.linea), h.campo, h.severidad, h.mensaje, h.valor === undefined ? '' : h.valor];
+            const celdas = [String(h.linea), h.rfc || '', h.campo, h.severidad, h.mensaje, h.valor === undefined ? '' : h.valor];
 
             // Una celda que empieza con = + - @ la interpreta Excel como fórmula.
             // Se le antepone un apóstrofe para que se lea como texto.

@@ -101,9 +101,16 @@ function cabezaTg7(array $o): void
 /**
  * Valores iniciales del encabezado.
  *
- * `ramoCredito` es 023 y no 022: el formato pide el ramo de OTORGAMIENTO DE
- * CRÉDITO, no el de afiliación, y 022 es el que traen la nómina y las órdenes.
- * El encabezado del archivo oficial de referencia usa 023.
+ * `ramoCredito` se llena solo al cargar la nómina (posiciones 1-3, `022`). El
+ * formato pide el ramo de OTORGAMIENTO DE CRÉDITO, no el de afiliación y
+ * vigencia, y el padrón los trae separados: «Ramo» = 22 y «Ramo AV» = 12912,
+ * con «R-P» = `22-S1212`, que es la combinación ramo + pagaduría que valida
+ * SERICA. El 023 que se usó antes venía del archivo de ejemplo de ISSSTE, que
+ * es de otro aportante. El 022 queda de arranque por si no se carga nómina.
+ *
+ * Entidad 12 (Guerrero) y municipio 029 (Chilpancingo de los Bravo, INEGI
+ * 12029) los confirmó ISSSTE el 29-09-2026. El organismo 520 sigue siendo el
+ * del archivo de ejemplo: PENDIENTE de confirmar, y la pantalla lo dice.
  */
 $encabezado = [
     'tipoNomina'   => '1',
@@ -111,9 +118,9 @@ $encabezado = [
     'periodicidad' => 'Q',
     'periodo'      => date('Y') . str_pad((string) (((int) date('n') - 1) * 2 + ((int) date('j') > 15 ? 2 : 1)), 2, '0', STR_PAD_LEFT),
     'organismo'    => '520',
-    'entidad'      => '09',
-    'municipio'    => '001',
-    'ramoCredito'  => '023',
+    'entidad'      => '12',
+    'municipio'    => '029',
+    'ramoCredito'  => '022',
 ];
 
 paginaInicio([
@@ -156,7 +163,7 @@ paginaInicio([
                         'icono' => 'nomina',
                         'eyebrow' => 'Paso 1 · obligatorio',
                         'titulo' => 'Nómina de la pagaduría',
-                        'pie' => 'Los archivos <code>ISSSTE{QQ}{PAG}</code> de una sola quincena',
+                        'pie' => 'Los archivos <code>ISSSTE{QQ}{PAG}</code> de una sola quincena. Se declara solo el tipo del encabezado',
                         'ayuda' => 'nomina',
                     ]); ?>
 
@@ -179,16 +186,16 @@ paginaInicio([
                     <?php cabezaTg7([
                         'icono' => 'ordenes',
                         'eyebrow' => 'Paso 2 · opcional',
-                        'titulo' => 'Órdenes de descuento',
-                        'pie' => 'La única fuente del número de préstamo. Cárgalas <strong>todas</strong>, de todas las quincenas',
+                        'titulo' => 'Padrón y órdenes de descuento',
+                        'pie' => 'La única fuente del número de préstamo: el padrón <code>.xlsx</code> y las órdenes de las quincenas posteriores a su corte',
                         'ayuda' => 'ordenes',
                     ]); ?>
 
                     <div class="tg7-carga">
-                        <input type="file" id="tg7-archivos-ordenes" multiple accept=".txt,.docx" hidden>
+                        <input type="file" id="tg7-archivos-ordenes" multiple accept=".xlsx,.txt,.docx" hidden>
                         <label class="tg7-zona" for="tg7-archivos-ordenes">
                             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><path d="M7.6 8.4 L12 4 L16.4 8.4"/><path d="M4 16v2.6A1.4 1.4 0 0 0 5.4 20h13.2A1.4 1.4 0 0 0 20 18.6V16"/></svg>
-                            <span id="tg7-etiqueta-ordenes">Selecciona los archivos .txt o .docx</span>
+                            <span id="tg7-etiqueta-ordenes">Selecciona el padrón .xlsx y las órdenes .txt o .docx</span>
                         </label>
                         <ul class="tg7-lista" id="tg7-lista-ordenes"></ul>
                     </div>
@@ -233,19 +240,22 @@ paginaInicio([
                         <div class="tg7-campo-form">
                             <label for="tg7-organismo">Organismo</label>
                             <input type="text" id="tg7-organismo" maxlength="3" value="<?= htmlspecialchars($encabezado['organismo']) ?>">
+                            <span class="ayuda tg7-pendiente">Pendiente: 520 es del archivo de ejemplo</span>
                         </div>
                         <div class="tg7-campo-form">
                             <label for="tg7-entidad">Entidad</label>
                             <input type="text" id="tg7-entidad" maxlength="2" value="<?= htmlspecialchars($encabezado['entidad']) ?>">
+                            <span class="ayuda">Guerrero</span>
                         </div>
                         <div class="tg7-campo-form">
                             <label for="tg7-municipio">Municipio</label>
                             <input type="text" id="tg7-municipio" maxlength="3" value="<?= htmlspecialchars($encabezado['municipio']) ?>">
+                            <span class="ayuda">Chilpancingo de los Bravo</span>
                         </div>
                         <div class="tg7-campo-form">
                             <label for="tg7-ramo">Ramo de crédito</label>
                             <input type="text" id="tg7-ramo" maxlength="3" value="<?= htmlspecialchars($encabezado['ramoCredito']) ?>">
-                            <span class="ayuda">De otorgamiento, no de afiliación</span>
+                            <span class="ayuda" id="tg7-ramo-ayuda">Se toma de la nómina al cargarla</span>
                         </div>
                     </div>
 
@@ -295,7 +305,7 @@ paginaInicio([
 
                     <div class="tabla">
                         <div class="tabla__head tg7-fila-sinprestamo">
-                            <div>RFC</div><div class="tg7-conteo">Retenido</div><div>Archivo</div><div>Línea</div>
+                            <div>RFC</div><div class="tg7-conteo">Retenido</div><div>Nombre</div><div>Pagaduría</div>
                         </div>
                         <div id="tg7-tabla-sinprestamo" class="tg7-scroll"></div>
                     </div>
@@ -426,32 +436,41 @@ paginaInicio([
             campos del detalle: nombre, RFC, CURP, NSS, sueldo, tipo de nombramiento y las
             deducciones, incluido el <code>P.C.P.</code> que dice cuánto se retuvo de préstamo.
         </p>
-        <h3>Ojo con esto</h3>
+        <h3>Un tipo de nómina por archivo</h3>
         <p>
-            Si cargas el <code>.ORD</code> y el <code>.RET</code> de la misma quincena, puede que un
-            RFC aparezca dos veces. Se conserva el primero y se avisa. Si necesitas la extraordinaria
-            por separado, genérala en su propia corrida con <em>Tipo de nómina = 2</em>.
+            Puedes soltar los cuatro tipos juntos: solo entran los registros del tipo que dice el
+            encabezado. Con <em>Tipo de nómina = 1</em> van los del <code>.ORD</code>; los de
+            <code>.EXT</code>, <code>.CAN</code> y <code>.RET</code> se apartan y se avisa cuántos
+            fueron. Para declararlos, haz otra corrida con su tipo.
         </p>
     </div>
 
-    <div data-ayuda-de="ordenes" data-kicker="Paso 2" data-titulo="Órdenes de descuento">
+    <div data-ayuda-de="ordenes" data-kicker="Paso 2" data-titulo="Padrón y órdenes de descuento">
         <p>
             Son la <strong>única</strong> fuente del número de préstamo: ese dato no existe en la
-            nómina. Sin ellas el archivo se genera igual, pero con ese campo vacío, y SERICA rechaza
+            nómina. Sin ellos el archivo se genera igual, pero con ese campo vacío, y SERICA rechaza
             esas líneas.
         </p>
-        <h3>Las dos formas valen igual</h3>
-        <p>
-            ISSSTE las entrega de dos maneras y puedes mezclarlas en la misma carga:
-        </p>
+        <h3>Tres formas, mezclables</h3>
         <ul>
-            <li><code>1{ramo}{pagaduría}_{folio}.txt</code> — uno por pagaduría, de ancho fijo.</li>
-            <li><code>RAMO {ramo} OD {QQAAAA}.docx</code> — el reporte impreso, que trae las seis
-                pagadurías juntas.</li>
+            <li><code>RAMO {ramo} PRESTAMOS VIGENTES {mes} {año}.xlsx</code> — el
+                <strong>padrón</strong>: todos los préstamos que siguen descontándose. Es lo primero
+                que hay que cargar.</li>
+            <li><code>1{ramo}{pagaduría}_{folio}.txt</code> — las órdenes de una quincena, de ancho
+                fijo.</li>
+            <li><code>RAMO {ramo} OD {QQAAAA}.docx</code> — las mismas órdenes, en el reporte
+                impreso.</li>
         </ul>
         <p>
-            Son el mismo dato: comparados renglón por renglón coinciden en 58 de 58. Si el mismo
-            préstamo viene en los dos, se cuenta una sola vez.
+            El padrón es un <strong>corte</strong>: la lista muestra hasta qué quincena llega. Las
+            altas posteriores no vienen en él, así que se cargan también las órdenes de esas
+            quincenas. Un préstamo que venga en dos archivos se cuenta una sola vez.
+        </p>
+        <h3>Cómo se escoge el préstamo</h3>
+        <p>
+            Se busca al trabajador por RFC y, si no aparece, por CURP. Cuando tiene varios préstamos
+            vigentes y solo uno cuadra con lo que le retuvo la nómina, se declara ese: los demás se
+            liquidaron al renovar, aunque el padrón los siga listando.
         </p>
         <h3>Por qué «todas las acumuladas»</h3>
         <p>
@@ -470,22 +489,25 @@ paginaInicio([
 
     <div data-ayuda-de="encabezado" data-kicker="Paso 3" data-titulo="Encabezado del archivo">
         <p>
-            Es la primera línea del TG-7 y de ella sale el nombre del archivo. Ninguno de estos ocho
-            campos se lee de los archivos cargados: se capturan aquí.
+            Es la primera línea del TG-7 y de ella sale el nombre del archivo. Se capturan aquí,
+            salvo el ramo de crédito, que se toma de la nómina.
         </p>
         <h3>Clave de aportante</h3>
         <p>
             La combinación <strong>organismo + entidad + municipio</strong> tiene que corresponder a
-            un aportante válido en el catálogo de SERICA. Los valores que trae la pantalla vienen del
-            archivo de ejemplo que entregó ISSSTE, así que <strong>hay que confirmar los de esta
-            dependencia antes de la primera entrega</strong>: si están mal, se rechaza el archivo
-            completo desde el encabezado.
+            un aportante válido en el catálogo de SERICA; si no, se rechaza el archivo completo desde
+            el encabezado. ISSSTE confirmó la entidad <code>12</code> (Guerrero) y el municipio
+            <code>029</code> (Chilpancingo de los Bravo). <strong>El organismo sigue pendiente</strong>:
+            el <code>520</code> viene del archivo de ejemplo, que es de otro aportante, y hay que
+            confirmarlo antes de la primera entrega.
         </p>
         <h3>Ramo de crédito</h3>
         <p>
-            Va <code>023</code>, el de <strong>otorgamiento de crédito</strong>. No es el
-            <code>022</code> que traen la nómina y las órdenes, que es el de afiliación y vigencia.
-            La especificación lo dice textual.
+            Se llena solo con el ramo que trae la nómina (<code>022</code>). El formato pide el de
+            <strong>otorgamiento de crédito</strong>, no el de afiliación y vigencia, y el padrón de
+            ISSSTE los distingue: «Ramo» es <code>22</code> y «Ramo AV» es <code>12912</code>. Además,
+            SERICA valida que ramo + pagaduría exista, y el padrón trae justo esa combinación
+            (<code>22-S1212</code>).
         </p>
         <h3>Periodo</h3>
         <p>
@@ -581,6 +603,7 @@ paginaInicio([
     assetTg7('js/core/nombres.js'),
     assetTg7('js/core/validaciones.js'),
     assetTg7('js/core/reporteOrdenes.js'),
+    assetTg7('js/core/padronXlsx.js'),
     assetTg7('js/core/cruce.js'),
     assetTg7('js/tg7.js'),
 ]); ?>

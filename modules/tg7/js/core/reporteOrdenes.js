@@ -133,8 +133,12 @@
      * con estructura válida. Así se descartan solos los encabezados, los
      * subtotales por pagaduría y los totales del final, sin depender de en qué
      * renglón empiezan.
+     *
+     * La homoclave es opcional: ISSSTE emite órdenes con RFC de 10 caracteres
+     * (`XXXX800101`, sin homoclave), y exigirla las tiraba en silencio. El `.txt` de la misma
+     * quincena sí las traía: 3 órdenes entre q09 y q21.
      */
-    const RE_RFC = /^[A-ZÑ&]{3,4}\d{6}[A-Z0-9]{3}$/;
+    const RE_RFC = /^[A-ZÑ&]{3,4}\d{6}(?:[A-Z0-9]{3})?$/;
 
     function ordenesDelXml(xml, nombreArchivo) {
         const ordenes = [];
@@ -171,6 +175,8 @@
                 numeroIssste: String(celdas[0]).replace(/\D/g, ''),
                 rfc: celdas[1],
                 numeroPrestamo: prestamo,
+                // TPOD: A alta, B baja, C cambio. Ver TIPO_ORDEN en layouts.js.
+                tipoOrden: String(celdas[4]).toUpperCase(),
                 importe,
                 // El reporte los imprime en QQAAAA, igual que el .txt.
                 periodoDesde: String(celdas[6]).replace(/\D/g, ''),

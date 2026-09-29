@@ -250,6 +250,8 @@
 .tg7-campo-form input:focus,
 .tg7-campo-form select:focus { outline: none; border-color: var(--wine); }
 .tg7-campo-form .ayuda { font-size: 11px; color: var(--ink-faint); }
+/* Un dato del encabezado que todavía no está confirmado: tiene que verse. */
+.tg7-campo-form .ayuda.tg7-pendiente { color: var(--wine); font-weight: 600; }
 
 /* ── Barra de acción al pie de una tarjeta ───────────────────────── */
 .tg7-accion {
@@ -342,7 +344,7 @@
 .tg7-fila-hallazgo    { display: grid; grid-template-columns: 6.5rem 11rem 1fr 5rem; gap: 10px; align-items: start; }
 .tg7-fila-rechazo     { display: grid; grid-template-columns: 11rem 9rem 1fr;        gap: 10px; align-items: start; }
 .tg7-fila-incidencia  { display: grid; grid-template-columns: 12rem 4rem 11rem 1fr;  gap: 10px; align-items: start; }
-.tg7-fila-sinprestamo { display: grid; grid-template-columns: 11rem 7rem 1fr 4rem;   gap: 10px; align-items: start; }
+.tg7-fila-sinprestamo { display: grid; grid-template-columns: 11rem 7rem 1fr 5rem;   gap: 10px; align-items: start; }
 
 .tg7-campo {
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;

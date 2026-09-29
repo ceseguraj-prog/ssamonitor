@@ -11,6 +11,7 @@
     'use strict';
 
     const F = window.TG7.formato;
+    const AF = window.TG7.anchoFijo;
     const L = window.TG7.layouts;
     const C = window.TG7.cruce;
     const V = window.TG7.validaciones;
@@ -46,19 +47,64 @@
 
             cargando(true, 'Leyendo archivos');
 
+            let fallidos = [];
+
             try {
-                estado[clave] = await leerArchivos(archivos);
-                cajaError.hidden = true;
+                const leido = await leerArchivos(archivos);
+
+                estado[clave] = leido.archivos;
+                fallidos = leido.fallidos;
             } catch (e) {
                 estado[clave] = [];
-                mostrarError(e.message);
+                fallidos = [e.message];
             } finally {
                 cargando(false);
             }
 
+            // Después del `finally`: `cargando(false)` esconde la caja de error.
+            if (fallidos.length) {
+                mostrarError('No se pudo leer ' + (fallidos.length === 1 ? 'un archivo' : fallidos.length + ' archivos')
+                    + ' y se dejó fuera; los demás sí se cargaron. ' + fallidos.join(' · '));
+            }
+
             pintarLista(idLista, estado[clave], clave);
+
+            if (clave === 'nomina') {
+                llenarRamo(estado.nomina);
+            }
+
             actualizarBoton();
         });
+    }
+
+    /**
+     * El ramo de crédito del encabezado sale de la nómina (posiciones 1-3). Si
+     * los archivos traen más de uno, no se escoge: se deja lo capturado y se
+     * avisa, porque cada ramo va en su propio archivo.
+     */
+    function llenarRamo(archivos) {
+        const ramos = new Set();
+
+        archivos.forEach(a => {
+            AF.dividirLineas(a.contenido || '').forEach(linea => {
+                if (linea.length === L.NOMINA_260.ancho) {
+                    ramos.add(linea.slice(0, 3));
+                }
+            });
+        });
+
+        const ayuda = document.getElementById('tg7-ramo-ayuda');
+
+        if (ramos.size === 1) {
+            document.getElementById('tg7-ramo').value = Array.from(ramos)[0];
+            ayuda.textContent = 'Tomado de la nómina';
+        } else if (ramos.size > 1) {
+            ayuda.textContent = 'La nómina trae varios ramos (' + Array.from(ramos).join(', ') + '): captúralo';
+        } else {
+            ayuda.textContent = 'Se toma de la nómina al cargarla';
+        }
+
+        pintarNombreArchivo();
     }
 
     /**
@@ -67,39 +113,50 @@
      * ancho fijo en cuanto apareciera un byte alto.
      *
      * Los .docx son los reportes «RAMO … OD …» de ISSSTE, que traen las mismas
-     * órdenes en tabla. Se interpretan aparte y se entregan ya normalizados.
+     * órdenes en tabla, y los .xlsx el padrón de préstamos vigentes. Se
+     * interpretan aparte y se entregan ya normalizados.
+     *
+     * Un archivo que no se puede leer se deja fuera y se reporta, pero no
+     * tumba a los demás: cuando se juntan veinte reportes, uno raro no debe
+     * obligar a volver a seleccionarlos todos.
      */
     async function leerArchivos(archivos) {
         const decodificador = new TextDecoder('latin1');
         const salida = [];
+        const fallidos = [];
 
         for (const f of archivos) {
-            const buffer = await f.arrayBuffer();
+            try {
+                const buffer = await f.arrayBuffer();
+                const lector = /\.docx$/i.test(f.name) ? window.TG7.reporteOrdenes.leerReporteDocx
+                    : /\.xlsx$/i.test(f.name) ? window.TG7.padronXlsx.leerPadronXlsx
+                    : null;
 
-            if (/\.docx$/i.test(f.name)) {
-                const leido = await window.TG7.reporteOrdenes.leerReporteDocx(buffer, f.name)
-                    .catch(e => {
-                        throw new Error(f.name + ': ' + e.message);
+                if (lector) {
+                    const leido = await lector(buffer, f.name);
+
+                    salida.push({
+                        nombre: f.name,
+                        bytes: f.size,
+                        tipo: leido.tipo || 'reporte',
+                        ordenes: leido.ordenes,
+                        avisos: leido.avisos
                     });
+
+                    continue;
+                }
 
                 salida.push({
                     nombre: f.name,
                     bytes: f.size,
-                    ordenes: leido.ordenes,
-                    avisos: leido.avisos
+                    contenido: decodificador.decode(buffer)
                 });
-
-                continue;
+            } catch (e) {
+                fallidos.push(f.name + ': ' + e.message);
             }
-
-            salida.push({
-                nombre: f.name,
-                bytes: f.size,
-                contenido: decodificador.decode(buffer)
-            });
         }
 
-        return salida;
+        return { archivos: salida, fallidos };
     }
 
     function pintarLista(id, archivos, clave) {
@@ -123,10 +180,13 @@
             let detalle;
 
             if (clave !== 'nomina') {
-                detalle = a.ordenes
-                    ? 'reporte Word · ' + miles(a.ordenes.length)
-                      + (a.ordenes.length === 1 ? ' orden' : ' órdenes')
-                    : pesar(a.bytes);
+                detalle = !a.ordenes ? pesar(a.bytes)
+                    : a.tipo === 'padron'
+                        ? 'padrón Excel · ' + miles(a.ordenes.length)
+                          + (a.ordenes.length === 1 ? ' préstamo' : ' préstamos')
+                          + ' · hasta la quincena ' + a.ordenes.reduce((m, o) => (o.desde > m ? o.desde : m), '')
+                        : 'reporte Word · ' + miles(a.ordenes.length)
+                          + (a.ordenes.length === 1 ? ' orden' : ' órdenes');
             } else if (info) {
                 detalle = 'quincena ' + info.quincena
                     + ' · pagaduría ' + (info.pagaduria || '?')
@@ -289,7 +349,7 @@
         pintarTiles([
             { etiqueta: 'Registros de nómina', valor: miles(res.registrosNomina) },
             { etiqueta: 'Con retención', valor: miles(res.conRetencion) },
-            { etiqueta: 'Órdenes vigentes', valor: miles(res.ordenesVigentes) + ' / ' + miles(res.ordenesCargadas) },
+            { etiqueta: 'Préstamos vigentes', valor: miles(res.ordenesVigentes) + ' / ' + miles(res.ordenesCargadas) },
             { etiqueta: 'Con núm. de préstamo', valor: miles(res.trabajadoresConPrestamo) },
             { etiqueta: 'Se emiten', valor: miles(val.validos.length), acento: true },
             { etiqueta: 'Rechazados', valor: miles(val.rechazados.length) }
@@ -335,7 +395,23 @@
             },
             {
                 n: res.importeDiscrepante,
-                texto: 'trabajadores donde la suma de sus órdenes vigentes no cuadra con el importe retenido en la nómina. Puede faltar un alta o sobrar un préstamo ya liquidado.'
+                texto: 'trabajadores cuyo préstamo no cuadra con el importe retenido en la nómina. Se declara lo retenido; puede ser una renovación posterior al padrón, así que conviene confirmar el número.'
+            },
+            {
+                n: res.renovacionesDescartadas,
+                texto: 'trabajadores con varios préstamos vigentes de los que solo uno cuadra con lo retenido. Se declaró ese; los demás se dan por liquidados en una renovación.'
+            },
+            {
+                n: res.porIdentidad,
+                texto: 'trabajadores cuyo préstamo se encontró por CURP o por RFC sin homoclave, porque el RFC del padrón no es igual al de la nómina.'
+            },
+            {
+                n: res.otroTipoNomina,
+                texto: 'registros con retención que son de otro tipo de nómina (.CAN, .EXT, .RET) y no van en este archivo. Genéralos en su propia corrida.'
+            },
+            {
+                n: res.pcpIlegible,
+                texto: 'registros con el P.C.P. ilegible. No se emiten: el archivo de nómina podría venir desalineado.'
             },
             {
                 n: res.numeroIsssteDiscrepante,
@@ -343,11 +419,15 @@
             },
             {
                 n: res.rfcRepetidoEnNomina,
-                texto: 'RFC con retención en más de un archivo de nómina del lote. Se conservó el primero: si cargaste .ORD y .RET juntos, esto es esperado.'
+                texto: 'RFC con retención en más de un archivo de nómina del mismo tipo. Se conservó el primero.'
+            },
+            {
+                n: res.prestamosDadosDeBaja,
+                texto: 'préstamos vigentes que una orden de baja (TPOD B) ya dio por terminados. No se declaran aunque el padrón los siga listando.'
             },
             {
                 n: res.ordenesDuplicadas,
-                texto: 'órdenes que venían repetidas entre los archivos cargados. Se contaron una sola vez.'
+                texto: 'préstamos que venían repetidos entre los archivos cargados (padrón y órdenes, o quincenas traslapadas). Se contaron una sola vez.'
             },
             {
                 n: val.hallazgos.filter(h => h.severidad === 'aviso' && h.campo === 'nss').length,
@@ -391,8 +471,8 @@
             '<div class="tabla__row tg7-fila-sinprestamo">'
             + '<div class="tg7-campo">' + esc(f.rfc) + '</div>'
             + '<div class="tg7-conteo">' + f.importe.toFixed(2) + '</div>'
-            + '<div>' + esc(f.origen) + '</div>'
-            + '<div>' + esc(String(f.linea)) + '</div>'
+            + '<div>' + esc(f.nombre) + '</div>'
+            + '<div>' + esc(f.pagaduria) + '</div>'
             + '</div>'
         ).join('');
 
