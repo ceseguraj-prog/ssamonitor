@@ -94,12 +94,24 @@ paginaInicio([
         </div>
 
         <?php /* La consulta original excluía siempre la UR 610. Se deja visible y
-                 desmarcable en vez de escondido en el SQL, para que quien lea un
-                 total sepa qué se dejó fuera. */ ?>
-        <label class="cnp-check cnp-check--suelto">
-            <input type="checkbox" id="excluir-ur" checked>
-            <span>Excluir UR <?= ConceptosRepository::UR_EXCLUIDA ?></span>
-        </label>
+                 cambiable en vez de escondido en el SQL, para que quien lea un
+                 total sepa qué se dejó fuera. «Solo» sirve para los reportes que
+                 piden la 610 sola, sin bajar todo y limpiarlo en Excel. */ ?>
+        <div class="cnp-ur">
+            <span class="cnp-ur__titulo">UR <?= ConceptosRepository::UR_APARTE ?></span>
+            <label class="cnp-check">
+                <input type="radio" name="ur" value="<?= ConceptosRepository::UR_EXCLUIR ?>" checked>
+                <span>Excluirla</span>
+            </label>
+            <label class="cnp-check">
+                <input type="radio" name="ur" value="<?= ConceptosRepository::UR_INCLUIR ?>">
+                <span>Incluirla</span>
+            </label>
+            <label class="cnp-check">
+                <input type="radio" name="ur" value="<?= ConceptosRepository::UR_SOLO ?>">
+                <span>Solo la <?= ConceptosRepository::UR_APARTE ?></span>
+            </label>
+        </div>
     </details>
 </form>
 

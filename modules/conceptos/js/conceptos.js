@@ -59,7 +59,7 @@
                 anio: document.getElementById('anio').value,
                 quincena: document.getElementById('quincena').value,
                 tablas: tablas.join(','),
-                excluirUr: document.getElementById('excluir-ur').checked ? '1' : '0'
+                ur: document.querySelector('input[name="ur"]:checked').value
             }, { etiqueta: 'Buscando en las tablas de nómina' });
         } catch (e) {
             respuesta = null;
@@ -94,7 +94,8 @@
         if (!datos.filas.length) {
             resultado.hidden = true;
             avisos.push(
-                `Ningún registro tiene ${datos.codigos.map(c => c + '…').join(' ni ')} en este ejercicio.`
+                `Ningún registro${datos.ur === 'solo' ? ` de la UR ${datos.urAparte}` : ''} tiene `
+                + `${datos.codigos.map(c => c + '…').join(' ni ')} en este ejercicio.`
             );
             return mostrarAviso(avisos.join(' '));
         }
@@ -227,7 +228,9 @@
         const enlace = document.createElement('a');
 
         enlace.href = URL.createObjectURL(blob);
-        enlace.download = `conceptos_${datos.codigos.join('-')}_${document.getElementById('anio').value}.csv`;
+        // El sufijo distingue el CSV de solo 610 del general, que si no se llamarían igual.
+        const sufijoUr = datos.ur === 'solo' ? `_ur${datos.urAparte}` : '';
+        enlace.download = `conceptos_${datos.codigos.join('-')}_${datos.anio}${sufijoUr}.csv`;
         enlace.click();
         URL.revokeObjectURL(enlace.href);
     }

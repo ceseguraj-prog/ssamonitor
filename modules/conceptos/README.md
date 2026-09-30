@@ -108,6 +108,10 @@ Dos consecuencias prácticas:
 - **Los códigos llevan de 3 a 5 caracteres.** La clave son 3 dígitos, así que un
   prefijo más corto no identifica nada (`2` traería medio ejercicio). Lo que se
   ignora se reporta en pantalla en vez de descartarse callando.
+- **La UR 610 tiene filtro propio** en opciones avanzadas: excluirla (por
+  omisión, como la consulta original), incluirla o traer **solo** la 610. El
+  último es para los reportes que la piden sola; antes había que bajar todo y
+  borrar el resto a mano en Excel. El CSV de «solo» lleva el sufijo `_ur610`.
 - **Tope de 20,000 coincidencias**, y cuando se alcanza la pantalla lo dice. Sin
   tope una búsqueda amplia se llevaría la memoria de PHP.
 - **Una tabla sin coincidencias se atenúa pero no se esconde**: saber que se buscó

@@ -53,10 +53,10 @@ try {
     // whitelist, así que un nombre inventado simplemente no se consulta.
     $tablas = array_filter(explode(',', (string) ($_GET['tablas'] ?? '')));
 
-    $excluirUr = ($_GET['excluirUr'] ?? '1') !== '0';
+    $filtroUr = ConceptosRepository::filtroUr((string) ($_GET['ur'] ?? ''));
 
     $inicio = microtime(true);
-    $resultado = ConceptosRepository::buscar($anio, $codigos, $quincena, $tablas, $excluirUr);
+    $resultado = ConceptosRepository::buscar($anio, $codigos, $quincena, $tablas, $filtroUr);
     $ms = (int) round((microtime(true) - $inicio) * 1000);
 
     echo json_encode([
@@ -68,6 +68,9 @@ try {
         'tope' => ConceptosRepository::TOPE,
         'codigos' => $codigos,
         'ignorados' => $ignorados,
+        'anio' => $anio,
+        'ur' => $filtroUr,
+        'urAparte' => ConceptosRepository::UR_APARTE,
         'ms' => $ms,
     ]);
 } catch (\Throwable $e) {

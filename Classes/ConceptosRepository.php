@@ -50,11 +50,28 @@ class ConceptosRepository
     private const IDENTIDAD = ['ANIO', 'QNA', 'TIPO', 'RFC', 'NOMB', 'UR'];
 
     /**
-     * Unidad responsable que se excluye por omisión. Se compara como cadena:
-     * UR es varchar(3) y contra un entero MySQL castea la columna de cada fila a
-     * número, lo que anula el índice y convierte en 0 cualquier UR no numérica.
+     * Unidad responsable que se trata aparte: por omisión se excluye, pero hay
+     * reportes que la piden sola. Se compara como cadena: UR es varchar(3) y
+     * contra un entero MySQL castea la columna de cada fila a número, lo que
+     * anula el índice y convierte en 0 cualquier UR no numérica.
      */
-    public const UR_EXCLUIDA = '610';
+    public const UR_APARTE = '610';
+
+    /**
+     * Qué hacer con UR_APARTE. 'solo' existe para no tener que bajar federal
+     * completo y borrar a mano en Excel todo lo que no es 610.
+     */
+    public const UR_EXCLUIR = 'excluir';
+    public const UR_INCLUIR = 'incluir';
+    public const UR_SOLO = 'solo';
+
+    private const FILTROS_UR = [self::UR_EXCLUIR, self::UR_INCLUIR, self::UR_SOLO];
+
+    /** Normaliza el filtro de UR que llega del cliente; lo desconocido excluye. */
+    public static function filtroUr(string $valor): string
+    {
+        return in_array($valor, self::FILTROS_UR, true) ? $valor : self::UR_EXCLUIR;
+    }
 
     /** Tope de coincidencias devueltas, para que una búsqueda amplia no tumbe a PHP. */
     public const TOPE = 20000;
@@ -252,7 +269,7 @@ class ConceptosRepository
         int $anio,
         array $prefijos,
         ?int $quincena,
-        bool $excluirUr
+        string $filtroUr
     ): \Generator {
         // El LIKE de los 50 slots es idéntico en todos los tramos: se arma una vez.
         $condiciones = [];
@@ -272,9 +289,12 @@ class ConceptosRepository
             $where[] = 'QNA IN (' . implode(', ', array_fill(0, count($formas), '?')) . ')';
             $params = array_merge($params, $formas);
 
-            if ($excluirUr) {
+            if ($filtroUr === self::UR_EXCLUIR) {
                 $where[] = 'UR <> ?';
-                $params[] = self::UR_EXCLUIDA;
+                $params[] = self::UR_APARTE;
+            } elseif ($filtroUr === self::UR_SOLO) {
+                $where[] = 'UR = ?';
+                $params[] = self::UR_APARTE;
             }
 
             $where[] = $condicionSlots;
@@ -347,9 +367,11 @@ class ConceptosRepository
         array $prefijos,
         ?int $quincena = null,
         array $tablas = [],
-        bool $excluirUr = true,
+        string $filtroUr = self::UR_EXCLUIR,
         int $tope = self::TOPE
     ): array {
+        $filtroUr = self::filtroUr($filtroUr);
+
         // Se fuerzan a string aunque normalizarCodigos() ya los entregue así: un
         // código numérico que llegue como int reventaría en str_starts_with() bajo
         // strict_types, y el error saldría hasta el fondo de la búsqueda.
@@ -375,7 +397,7 @@ class ConceptosRepository
             $matches = 0;
             $leidas = 0;
 
-            foreach (self::filasDe($tabla, $anio, $prefijos, $quincena, $excluirUr) as $fila) {
+            foreach (self::filasDe($tabla, $anio, $prefijos, $quincena, $filtroUr) as $fila) {
                 $leidas++;
 
                 foreach (self::desglosar($tabla, $fila, $prefijos) as $match) {
