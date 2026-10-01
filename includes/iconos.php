@@ -50,6 +50,11 @@ function iconoModulo(string $slug): string
         // del mismo trámite.
         'tg7' => '<path d="M6 3.2h7.4L19 8.6v12.2H6z"/><path d="M13.2 3.4V9h5.4"/>'
             . '<path d="M9.6 17.4V12.2h2a1.7 1.7 0 0 1 0 3.4H8.8"/><path d="M8.8 14.3h3.9"/>',
+        // Hoja con un reloj de arena: la nómina del personal eventual, que se
+        // contrata por tiempo. Misma hoja que 'tg7' y 'errores', con otra marca.
+        'eventuales' => '<path d="M6 3.2h7.4L19 8.6v12.2H6z"/><path d="M13.2 3.4V9h5.4"/>'
+            . '<path d="M9.4 11.6h5.2"/><path d="M9.4 18.4h5.2"/>'
+            . '<path d="M10 11.8c0 2.2 4 2.6 4 4.6"/><path d="M14 11.8c0 2.2-4 2.6-4 4.6"/>',
         // Caja con una flecha que sale hacia arriba: los timbres que ya están
         // en la base y se sacan de ahí para mandarlos a extracción.
         'extraccion' => '<path d="M3.6 9.4h16.8v9.4a1.6 1.6 0 0 1-1.6 1.6H5.2a1.6 1.6 0 0 1-1.6-1.6z"/>'

@@ -1,0 +1,451 @@
+/* Estilos del generador de nómina de eventuales. Los colores salen de los
+   tokens de css/theme.css para que el modo oscuro funcione sin reglas aparte.
+   Es la misma familia que el TG-7 (tarjetas de paso, zonas de carga, modal):
+   las dos son herramientas de archivo y se tienen que leer igual. */
+
+.nev-hoja { width: 100%; }
+
+/* ── Aviso de privacidad ───────────────────────────────────────── */
+.nev-intro {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    flex-wrap: wrap;
+    padding: 12px 18px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-soft);
+    border-radius: var(--r-field);
+    background: var(--chip);
+}
+.nev-intro__icono { color: var(--wine); flex: 0 0 auto; }
+.nev-intro p {
+    margin: 0;
+    flex: 1 1 260px;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--ink-muted);
+}
+
+.nev-ayuda-enlace {
+    border: 0;
+    background: transparent;
+    padding: 0;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .2px;
+    color: var(--wine);
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+.nev-ayuda-enlace:hover { opacity: .75; }
+
+/* ── Tarjeta de paso ───────────────────────────────────────────── */
+.nev-paso { padding: 22px 26px 24px; }
+#nev-resultado > .nev-paso { margin-top: 18px; }
+
+/* Dos cargas a la izquierda, los datos del archivo a la derecha. Las columnas
+   se estiran a la misma altura para que el botón cierre a la par del paso 2. */
+.nev-captura {
+    display: grid;
+    grid-template-columns: minmax(320px, 620px) minmax(0, 1fr);
+    gap: 18px;
+}
+.nev-captura__fuentes { display: grid; gap: 18px; }
+.nev-paso--lado { display: flex; flex-direction: column; }
+.nev-paso--lado .nev-accion { margin-top: auto; }
+
+.nev-cabeza {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 18px;
+}
+.nev-cabeza__icono {
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: var(--chip);
+    color: var(--wine);
+}
+.nev-cabeza__texto { flex: 1 1 auto; min-width: 0; }
+.nev-cabeza__titulo {
+    margin: 3px 0 0;
+    font-family: var(--font-display);
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -.2px;
+    color: var(--ink);
+}
+.nev-cabeza__pie {
+    margin: 5px 0 0;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--ink-muted);
+}
+.nev-cabeza__pie code {
+    font-size: 11.5px;
+    background: var(--chip);
+    border-radius: var(--r-chip);
+    padding: 1px 5px;
+}
+.nev-cabeza__extra { flex: 0 0 auto; align-self: center; }
+
+.nev-ayuda-btn {
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--card);
+    color: var(--ink-faint);
+    cursor: pointer;
+    transition: color .16s ease, border-color .16s ease, background .16s ease;
+}
+.nev-ayuda-btn:hover { color: var(--wine); border-color: var(--wine-soft); background: var(--hover); }
+.nev-ayuda-btn:focus-visible { outline: 2px solid var(--wine-soft); outline-offset: 2px; }
+
+/* ── Zona de archivos ──────────────────────────────────────────── */
+.nev-zona {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    padding: 22px 18px;
+    border-radius: var(--r-field);
+    border: 1px dashed var(--wine-soft);
+    background: var(--bg);
+    font-size: 13.5px;
+    color: var(--ink-muted);
+    text-align: center;
+    transition: border-color .18s ease, background .18s ease;
+}
+.nev-zona:hover { border-color: var(--wine); background: var(--hover); }
+.nev-zona svg { color: var(--wine); flex: 0 0 auto; }
+
+/* Altura fija con y sin archivos, para que la tarjeta no salte al cargar. */
+.nev-carga {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    height: 120px;
+}
+.nev-carga.con-archivos { grid-template-columns: 1fr 1fr; }
+
+.nev-lista:empty { display: none; }
+.nev-lista {
+    list-style: none;
+    margin: 0;
+    padding: 0 6px 0 0;
+    overflow-y: auto;
+    min-height: 0;
+}
+.nev-archivo {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 7px 0;
+    border-top: 1px solid var(--border-soft);
+    font-size: 12.5px;
+}
+.nev-archivo:first-child { border-top: 0; }
+.nev-archivo__nombre { font-weight: 600; color: var(--ink); word-break: break-word; }
+.nev-archivo__detalle { color: var(--ink-muted); }
+/* Un prod_pago de la quincena anterior: se aceptó, pero no se usa. */
+.nev-archivo--ignorado .nev-archivo__nombre { color: var(--ink-faint); font-weight: 500; }
+.nev-archivo--ignorado .nev-archivo__detalle { color: var(--ink-faint); }
+.nev-archivo--error .nev-archivo__detalle { color: var(--can-text); font-weight: 600; }
+
+/* ── Datos del archivo ─────────────────────────────────────────── */
+.nev-campos {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+.nev-campo-form { display: flex; flex-direction: column; gap: 7px; }
+.nev-campo-form > label {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 1.1px;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+}
+.nev-campo-form input {
+    font-family: var(--font-ui);
+    font-size: 13.5px;
+    color: var(--ink);
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-field);
+    padding: 10px 12px;
+    width: 100%;
+    box-sizing: border-box;
+}
+.nev-campo-form input:focus { outline: none; border-color: var(--wine); }
+.nev-campo-form input[readonly] { background: var(--bg); color: var(--ink-muted); }
+.nev-campo-form .ayuda { font-size: 11px; color: var(--ink-faint); }
+.nev-campo-form .ayuda.nev-invalido { color: var(--can-text); font-weight: 600; }
+
+/* Los cuatro nombres que van a salir, en monoespaciada: es lo que se busca
+   después en la carpeta. */
+.nev-salen { margin-top: 20px; }
+.nev-salen__lista {
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 5px;
+}
+.nev-salen__lista li {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12px;
+    color: var(--wine);
+    font-weight: 600;
+    word-break: break-word;
+}
+.nev-salen__lista li.nev-salen__vacio {
+    font-family: var(--font-ui);
+    color: var(--ink-faint);
+    font-weight: 400;
+}
+
+/* ── Barra de acción ───────────────────────────────────────────── */
+.nev-accion {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 22px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-soft);
+}
+
+.nev-alerta {
+    background: var(--can-bg);
+    color: var(--can-text);
+    border-radius: var(--r-card);
+    padding: 16px 20px;
+    margin-top: 18px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* ── Resultado ─────────────────────────────────────────────────── */
+#nev-resultado:focus { outline: none; }
+
+.nev-resumen { font-size: 12.5px; color: var(--ink-muted); margin-bottom: 20px; }
+
+.nev-tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 18px;
+}
+.nev-stat .valor {
+    font-family: var(--font-display);
+    font-size: 25px;
+    font-weight: 500;
+    letter-spacing: -.5px;
+    margin-top: 8px;
+}
+.nev-stat .valor.acento { color: var(--wine); }
+
+/* Los dos juegos lado a lado: se comparan entre sí de un vistazo. */
+.nev-juegos {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin-top: 26px;
+}
+.nev-juego {
+    border: 1px solid var(--border-soft);
+    border-radius: var(--r-field);
+    padding: 16px 18px 18px;
+}
+.nev-juego__cabeza {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+.nev-juego__titulo {
+    margin: 3px 0 0;
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 600;
+}
+.nev-juego__cuenta { font-size: 12px; color: var(--ink-muted); }
+.nev-juego__descargas { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+
+.nev-fila-clave { display: grid; grid-template-columns: 5.5rem 1fr 5.5rem 9rem; gap: 10px; align-items: center; }
+.nev-fila-total { background: var(--bg); }
+.nev-ded {
+    font-size: 10.5px;
+    letter-spacing: .4px;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-left: 4px;
+}
+.nev-cuadre { font-size: 11px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; }
+.nev-cuadre.ok { color: var(--imp-text); }
+.nev-cuadre.mal { color: var(--can-text); }
+
+/* Altas, bajas y retroactivos en tres columnas. */
+.nev-movs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 22px;
+}
+.nev-mov__titulo {
+    margin: 0 0 10px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.1px;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+}
+.nev-mov__titulo span {
+    font-family: var(--font-display);
+    font-size: 15px;
+    letter-spacing: 0;
+    color: var(--ink);
+    margin-left: 6px;
+}
+.nev-mov__nota { grid-column: 1 / -1; margin: 0; }
+
+.nev-fila-alta  { display: grid; grid-template-columns: 9.5rem 1fr 5.5rem; gap: 10px; align-items: start; }
+.nev-fila-baja  { display: grid; grid-template-columns: 9.5rem 1fr;        gap: 10px; align-items: start; }
+.nev-fila-retro { display: grid; grid-template-columns: 9.5rem 1fr 6.5rem; gap: 10px; align-items: start; }
+.nev-fila-hallazgo { display: grid; grid-template-columns: 6.5rem 4.5rem 9.5rem 1fr; gap: 10px; align-items: start; }
+
+.nev-campo {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 11.5px;
+    word-break: break-all;
+}
+.nev-sub { font-size: 11px; color: var(--ink-faint); margin-top: 2px; font-family: var(--font-ui); }
+.nev-mensaje { font-size: 12px; color: var(--ink-muted); line-height: 1.5; }
+.nev-mensaje strong { color: var(--ink); font-weight: 600; }
+.nev-conteo { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+
+.nev-badge { font-size: 12px; color: var(--ink-faint); text-align: right; }
+.nev-nota { font-size: 11.5px; color: var(--ink-faint); }
+
+.nev-scroll { max-height: 420px; overflow-y: auto; }
+.nev-scroll--bajo { max-height: 300px; }
+
+/* ── Modal de ayuda ────────────────────────────────────────────── */
+.nev-ayudas { display: none; }
+
+.nev-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 80; /* sobre el rail (60) y el velo de carga (40) */
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    box-sizing: border-box;
+}
+.nev-modal[hidden] { display: none; }
+.nev-modal__fondo {
+    position: absolute;
+    inset: 0;
+    background: var(--veil);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+.nev-modal__hoja {
+    position: relative;
+    width: 100%;
+    max-width: 640px;
+    max-height: 86vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-card);
+    box-shadow: var(--shadow-sheet);
+    overflow: hidden;
+}
+.nev-modal__cabeza {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 22px 26px 14px;
+    border-bottom: 1px solid var(--border-soft);
+}
+.nev-modal__titulo {
+    margin: 4px 0 0;
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 600;
+}
+.nev-modal__cerrar {
+    border: 0;
+    background: transparent;
+    color: var(--ink-faint);
+    font-size: 26px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 4px;
+}
+.nev-modal__cerrar:hover { color: var(--wine); }
+.nev-modal__cuerpo { overflow-y: auto; padding: 6px 26px 22px; min-height: 0; }
+.nev-modal__cuerpo p { margin: 14px 0 0; font-size: 13.5px; line-height: 1.65; color: var(--ink-muted); }
+.nev-modal__cuerpo h3 {
+    margin: 22px 0 0;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.1px;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+}
+.nev-modal__cuerpo ul { margin: 12px 0 0; padding-left: 20px; }
+.nev-modal__cuerpo li { margin-top: 7px; font-size: 13.5px; line-height: 1.6; color: var(--ink-muted); }
+.nev-modal__cuerpo strong { color: var(--ink); font-weight: 600; }
+.nev-modal__cuerpo code {
+    background: var(--chip);
+    border-radius: var(--r-chip);
+    padding: 1px 5px;
+    font-size: 12px;
+    color: var(--wine);
+}
+
+/* ── Pantallas angostas ────────────────────────────────────────── */
+@media (max-width: 1100px) {
+    .nev-juegos { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 1000px) {
+    .nev-captura { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 720px) {
+    .nev-paso { padding: 20px 16px 22px; }
+    .nev-campos { grid-template-columns: 1fr; }
+    .nev-carga,
+    .nev-carga.con-archivos { grid-template-columns: 1fr; height: auto; }
+    .nev-zona { min-height: 96px; }
+    .nev-lista { max-height: 140px; }
+    .nev-cabeza { gap: 11px; flex-wrap: wrap; }
+    .nev-cabeza__extra { order: 4; width: 100%; }
+    .nev-badge { text-align: left; }
+    .nev-fila-clave { grid-template-columns: 4.5rem 1fr 6.5rem; }
+    .nev-fila-clave > :nth-child(3) { display: none; }
+    .nev-fila-alta,
+    .nev-fila-baja,
+    .nev-fila-retro,
+    .nev-fila-hallazgo { grid-template-columns: 1fr; gap: 4px; }
+    .nev-conteo { text-align: left; }
+}
