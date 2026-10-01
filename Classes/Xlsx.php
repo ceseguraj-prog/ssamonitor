@@ -16,8 +16,11 @@ use ZipArchive;
  * archivos de vendor.
  *
  * A cambio, esto hace lo justo y nada más: varias hojas, texto y números, seis
- * estilos y ancho de columna. No hay fórmulas, ni imágenes, ni fechas — si
+ * estilos, ancho de columna y autofiltro. No hay fórmulas, ni imágenes, ni fechas — si
  * alguna vez hacen falta, ahí sí conviene la librería de verdad.
+ *
+ * Lo usan Extracción (el resumen del cierre) y Reporte QNA (diez mil renglones
+ * de una quincena).
  *
  * Las cadenas van como inlineStr en vez de la tabla compartida de cadenas: en
  * una hoja de resumen casi nada se repite, así que la tabla no ahorraría nada y
@@ -46,24 +49,27 @@ class Xlsx
         'fuerte'      => 6,
     ];
 
-    /** @var list<array{nombre:string,anchos:list<int>,filas:list<array>}> */
+    /** @var list<array{nombre:string,anchos:list<int>,filas:list<array>,autofiltro:bool}> */
     private array $hojas = [];
 
     /**
      * Agrega una hoja.
      *
-     * @param string     $nombre nombre de la pestaña; Excel lo limita a 31 caracteres
-     * @param list<int>  $anchos ancho de cada columna, en caracteres
-     * @param list<array> $filas  cada fila es una lista de celdas; una celda es un
-     *                            escalar o [valor, estilo]. Una fila vacía es un
-     *                            renglón en blanco.
+     * @param string     $nombre     nombre de la pestaña; Excel lo limita a 31 caracteres
+     * @param list<int>  $anchos     ancho de cada columna, en caracteres; vacío deja el de Excel
+     * @param list<array> $filas     cada fila es una lista de celdas; una celda es un
+     *                               escalar o [valor, estilo]. Una fila vacía es un
+     *                               renglón en blanco.
+     * @param bool       $autofiltro pone el filtro de Excel sobre todo lo escrito, con
+     *                               la primera fila como encabezado
      */
-    public function hoja(string $nombre, array $anchos, array $filas): void
+    public function hoja(string $nombre, array $anchos, array $filas, bool $autofiltro = false): void
     {
         $this->hojas[] = [
-            'nombre' => self::nombreDeHoja($nombre),
-            'anchos' => $anchos,
-            'filas'  => $filas,
+            'nombre'     => self::nombreDeHoja($nombre),
+            'anchos'     => $anchos,
+            'filas'      => $filas,
+            'autofiltro' => $autofiltro,
         ];
     }
 
@@ -129,16 +135,27 @@ class Xlsx
     private function workbook(): string
     {
         $sheets = '';
+        $nombres = '';
 
         foreach ($this->hojas as $i => $hoja) {
             $sheets .= '<sheet name="' . self::esc($hoja['nombre']) . '" sheetId="' . ($i + 1)
                 . '" r:id="rId' . ($i + 1) . '"/>';
+
+            // Excel guarda el rango del filtro también aquí; sin este nombre lo
+            // abre igual, pero al ordenar desde el filtro puede perder el rango.
+            if ($hoja['autofiltro'] && ($rango = self::rangoUsado($hoja)) !== null) {
+                $nombres .= '<definedName name="_xlnm._FilterDatabase" localSheetId="' . $i . '" hidden="1">'
+                    . self::esc("'" . str_replace("'", "''", $hoja['nombre']) . "'!" . self::absoluto($rango))
+                    . '</definedName>';
+            }
         }
 
         return self::CABECERA_XML
             . '<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"'
             . ' xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">'
-            . '<sheets>' . $sheets . '</sheets></workbook>';
+            . '<sheets>' . $sheets . '</sheets>'
+            . ($nombres !== '' ? '<definedNames>' . $nombres . '</definedNames>' : '')
+            . '</workbook>';
     }
 
     private function workbookRels(): string
@@ -202,7 +219,31 @@ class Xlsx
             . '</styleSheet>';
     }
 
-    /** @param array{nombre:string,anchos:list<int>,filas:list<array>} $hoja */
+    /**
+     * El rango escrito de la hoja (A1:O11261), o null si no hay nada. Las
+     * columnas salen de la fila más ancha.
+     *
+     * @param array{filas:list<array>} $hoja
+     */
+    private static function rangoUsado(array $hoja): ?string
+    {
+        $filas = count($hoja['filas']);
+        $ancho = 0;
+
+        foreach ($hoja['filas'] as $fila) {
+            $ancho = max($ancho, count($fila));
+        }
+
+        return $filas && $ancho ? 'A1:' . self::columna($ancho - 1) . $filas : null;
+    }
+
+    /** A1:O11261 → $A$1:$O$11261, que es como Excel escribe los nombres definidos. */
+    private static function absoluto(string $rango): string
+    {
+        return (string) preg_replace('/([A-Z]+)(\d+)/', '\$$1\$$2', $rango);
+    }
+
+    /** @param array{nombre:string,anchos:list<int>,filas:list<array>,autofiltro:bool} $hoja */
     private static function sheet(array $hoja): string
     {
         $cols = '';
@@ -237,9 +278,15 @@ class Xlsx
             $filas .= '<row r="' . $numero . '">' . $celdas . '</row>';
         }
 
+        $filtro = '';
+
+        if ($hoja['autofiltro'] && ($rango = self::rangoUsado($hoja)) !== null) {
+            $filtro = '<autoFilter ref="' . $rango . '"/>';
+        }
+
         return self::CABECERA_XML
             . '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
-            . $cols . '<sheetData>' . $filas . '</sheetData></worksheet>';
+            . $cols . '<sheetData>' . $filas . '</sheetData>' . $filtro . '</worksheet>';
     }
 
     /** @param mixed $celda escalar, o [valor, estilo] */

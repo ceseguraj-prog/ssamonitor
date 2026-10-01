@@ -1,0 +1,151 @@
+/**
+ * Reporte QNA.
+ *
+ * Solo lo propio de esta pantalla: tokens, .card, .eyebrow, .figure, .field,
+ * los botones y .tabla salen de css/theme.css y aquí no se redefinen.
+ */
+
+/* ── Periodo ─────────────────────────────────────────────────────────────── */
+
+.qna-filtros {
+  padding: 22px 24px;
+  margin-bottom: 20px;
+}
+
+.qna-fila {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.qna-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  flex: 0 0 150px;
+}
+
+.qna-campo .field { width: 100%; }
+
+.qna-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin-top: 16px;
+  font-size: 13px;
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+.qna-check input { margin-top: 3px; accent-color: var(--wine); }
+
+.qna-ayuda {
+  margin-top: 14px;
+  font-size: 12.5px;
+  color: var(--ink-muted);
+  line-height: 1.6;
+}
+
+.qna-ayuda code,
+.qna-check code,
+.qna-aviso code {
+  background: var(--chip);
+  border-radius: var(--r-chip);
+  padding: 2px 6px;
+  font-size: 12px;
+  color: var(--wine);
+}
+
+/* ── Avisos ──────────────────────────────────────────────────────────────── */
+
+.qna-aviso {
+  background: var(--can-bg);
+  color: var(--can-text);
+  border-radius: var(--r-tile);
+  padding: 16px 22px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  margin-bottom: 16px;
+}
+
+.qna-aviso--alerta {
+  background: var(--act-bg);
+  color: var(--act-text);
+}
+
+.qna-codigos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+/* ── Resultado ───────────────────────────────────────────────────────────── */
+
+.qna-metricas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.qna-tile {
+  padding: 20px 24px;
+  border-radius: var(--r-tile);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.qna-tile .figure {
+  font-size: 24px;
+  font-variant-numeric: tabular-nums;
+}
+
+.qna-descarga {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+}
+
+.qna-archivo {
+  margin-top: 8px;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.qna-pie {
+  margin-top: 4px;
+  font-size: 12.5px;
+  color: var(--ink-muted);
+}
+
+/* ── Por tabla ───────────────────────────────────────────────────────────── */
+
+.qna-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 0.8fr repeat(4, 1.1fr);
+  gap: 10px;
+}
+
+.qna-tabla-nom { font-weight: 600; font-size: 12.5px; }
+
+/* Una tabla sin renglones se atenúa pero no se esconde: saber que se leyó y
+   salió vacía es parte del resultado (una carga atrasada, por ejemplo). */
+.qna-vacia { opacity: .5; }
+
+.qna-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .qna-tabla { overflow-x: auto; }
+  .qna-tabla .qna-grid { min-width: 760px; }
+}

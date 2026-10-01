@@ -82,17 +82,19 @@ un timbre en la entrega y nadie se enteraría hasta que allá lo reclamaran.
 
 ```
 ExtraccionRepository.php   las consultas; todo SELECT
-Xlsx.php                   escritor mínimo de .xlsx (ZipArchive + OOXML)
+Reporte.php                el Excel y la nota
 ajax/inventario.php        qué productos toca cada grupo en el periodo
 ajax/generar.php           arma los .txt, el Excel, la nota y el zip
 ajax/descargar.php         entrega el zip o uno de sus archivos, por token
 ```
 
-`Xlsx.php` existe porque el proyecto no tiene Composer, y traer PhpSpreadsheet
-solo para escribir dos hojas de números obligaría a montar un autoloader y a
-versionar unos cuantos miles de archivos de vendor. A cambio hace lo justo:
-varias hojas, texto y números, seis estilos y ancho de columna. Si alguna vez
-hacen falta fórmulas o fechas, ahí sí conviene la librería de verdad.
+El Excel se escribe con [`Classes/Xlsx.php`](../../Classes/Xlsx.php), que nació
+aquí y se movió a `Classes/` cuando el Reporte QNA también lo necesitó. Existe
+porque el proyecto no tiene Composer, y traer PhpSpreadsheet solo para escribir
+unas hojas de números obligaría a montar un autoloader y a versionar unos
+cuantos miles de archivos de vendor. A cambio hace lo justo: varias hojas, texto
+y números, unos cuantos estilos y ancho de columna. Si alguna vez hacen falta
+fórmulas o fechas, ahí sí conviene la librería de verdad.
 
 ## Permisos
 

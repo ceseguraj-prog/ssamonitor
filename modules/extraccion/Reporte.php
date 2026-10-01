@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App;
 
 require_once __DIR__ . '/ExtraccionRepository.php';
-require_once __DIR__ . '/Xlsx.php';
+require_once __DIR__ . '/../../Classes/Xlsx.php';
 
 /**
  * Las dos salidas legibles del cierre: la nota en markdown y el libro de Excel.
